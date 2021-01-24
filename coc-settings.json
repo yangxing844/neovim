@@ -1,0 +1,75 @@
+{ //python stuff
+	"python.linting.pylintEnabled": false,
+	"python.linting.pep8Enabled": true,
+	"python.linting.enabled": true,
+	"python.linting.flake8Enabled": false,
+	//"python.formatting.provider": "autopep8",
+	// explorer
+	"explorer.width": 30,
+	"explorer.icon.enableNerdfont": true,
+	"explorer.icon.enableVimDevicons": true,
+	"explorer.previewAction.onHover": false,
+	"explorer.file.child.template": "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5]",
+	"explorer.keyMappings.global": {
+		"<cr>": [
+			"expandable?",
+			"expand",
+			"open"
+		],
+		"v": "open:vsplit"
+	},
+	"explorer.file.hiddenRules": {
+		"extensions": [
+			"o",
+			"a",
+			"obj",
+			"pyc",
+			"aux",
+			"fls",
+			"log",
+			"fdb_latexmk",
+			"gz",
+			"xdv",
+			"pdf"
+		],
+		"filenames": [],
+		"patternMatches": [
+			"^\\."
+		]
+	},
+	"languageserver": {
+		"ccls": {
+			"command": "ccls",
+			"args": [
+				"--log-file=/tmp/ccls.log",
+				"-v=1"
+			],
+			"filetypes": [
+				"c",
+				"cc",
+				"cpp",
+				"c++",
+				"objc",
+				"objcpp"
+			],
+			"rootPatterns": [
+				".ccls",
+				"compile_commands.json"
+			],
+			"initializationOptions": {
+				"cache": {
+					"directory": "/tmp/ccls"
+				},
+				"client": {
+					"snippetSupport": true
+				},
+				"index": {
+					"onChange": true
+				},
+				"highlight": {
+					"lsRanges": true
+				}
+			}
+		}
+	}
+}
