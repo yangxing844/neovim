@@ -1,9 +1,9 @@
-"               _                           
-"	   __   __ (_)  _ __ ___    _ __    ___ 
+"               _
+"	   __   __ (_)  _ __ ___    _ __    ___
 "	   \ \ / / | | | '_ ` _ \  | '__|  / __|
-"	_   \ V /  | | | | | | | | | |    | (__ 
- " (_)   \_/   |_| |_| |_| |_| |_|     \___|
-                                          
+"	_   \ V /  | | | | | | | | | |    | (__
+"  (_)   \_/   |_| |_| |_| |_| |_|     \___|
+
 "{{{1 Load plugins
 call plug#begin('~/.vim/plugged')
 "" vim-sensible {{{ "
@@ -19,7 +19,7 @@ Plug 'honza/vim-snippets'
 " }}} vim-snippets "
 "{{{2   Coc Plugin
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-inoremap <silent><expr> <c-j> 
+inoremap <silent><expr> <c-j>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<c-j>" :
       \ coc#refresh()
@@ -371,7 +371,7 @@ au BufNewFile,BufRead *.tex
 "   endif
 " endfunction
 "2}}}
-" let mapleader="\<space>"
+let mapleader="\<space>"
 noremap <silent> k gk
 noremap <silent> j gj
 noremap <silent> 0 g0
@@ -397,7 +397,7 @@ nnoremap  <leader>f :FZF<CR>
 nmap  <silent> ++ vip++<esc>
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
 " remve blank in the end
-nnoremap <silent> <c-c> :%s/\s\+$//<CR>
+nnoremap <silent> <leader>rb :%s/\s\+$//<CR>
 map <F1> :call UltiSnips#RefreshSnippets() <CR>
 map <F2> :browse oldfiles <CR>
 nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
@@ -411,9 +411,10 @@ inoremap <C-a> <C-o>^
 vnoremap <c-e> $
 vnoremap <c-a> ^
 nnoremap <silent> `` :on<CR>
-nnoremap <silent> <space> za
+nnoremap <silent> <backspace> za
 nnoremap <silent> <C-h> <C-w><C-h>
-nnoremap <silent> <C-j> <C-w><C-j> nnoremap <silent> <C-k> <C-w><C-k>
+nnoremap <silent> <C-j> <C-w><C-j>
+nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
 nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
