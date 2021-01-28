@@ -4,6 +4,7 @@
 "	_   \ V /  | | | | | | | | | |    | (__
 "  (_)   \_/   |_| |_| |_| |_| |_|     \___|
 
+let mapleader="\<space>"
 "{{{1 Load plugins
 call plug#begin('~/.vim/plugged')
 "" vim-sensible {{{ "
@@ -94,7 +95,8 @@ Plug 'tpope/vim-commentary'
 
 " }}} Fold description "
 " python-syntax-highlight {{{ "
-Plug 'vim-python/python-syntax' " {'for':'python'}
+" Plug 'vim-python/python-syntax' " {'for':'python'}
+Plug 'numirias/semshi'
 " }}} python-syntax-highlight "
 " tabular {{{ "
 Plug 'godlygeek/tabular',{'for':'markdown'}
@@ -159,6 +161,7 @@ let g:vimtex_view_method = 'zathura'
 let g:vimtex_view_automatic = 0
 let g:vimtex_quickfix_mode = 0
 let g:vimtex_matchparen_enabled = 0
+nnoremap <localleader>lt :call vimtex#fzf#run()<cr>
 " let g:vimtex_quickfix_latexlog = {
 "           \ 'overfull' : 0,
 "           \ 'underfull' : 0,
@@ -203,7 +206,7 @@ Plug 'junegunn/fzf', {
       \}
 Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
-" let $FZF_DEFAULT_COMMAND='rg --files --hidden -g "!.git" '
+let $FZF_DEFAULT_COMMAND='rg --files --hidden -g "!.git" -g "!.cache" -g "!.cargo" '
 let g:fzf_layout = {'window': {'width': 0.8, 'height': 0.75} }
 let g:fzf_colors = {
       \ 'fg':      ['fg', 'Normal'],
@@ -338,6 +341,7 @@ au BufNewFile,BufRead *.tex
     \ set nornu |
     \ let g:loaded_matchparen=1 |
 	\ let b:AutoPairs =  {'(':')', '[':']', '{':'}','"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''",'$':'$'} |
+au VimLeave * set guicursor=a:hor1 " auto cmd to restore cursor"
 "}}}1
 "{{{1keymapping
 "dealing with wrapped lines
@@ -371,7 +375,6 @@ au BufNewFile,BufRead *.tex
 "   endif
 " endfunction
 "2}}}
-let mapleader="\<space>"
 noremap <silent> k gk
 noremap <silent> j gj
 noremap <silent> 0 g0
@@ -391,10 +394,10 @@ nnoremap d#   *``dgN
 nnoremap dg* g*``dgn
 nnoremap dg# g*``dgN
 nnoremap gV  `[V`]
-nnoremap <silent> ff :CocCommand explorer<CR>
-nnoremap for :call CocAction('format')<CR>
-nnoremap  <leader>f :FZF<CR>
-nmap  <silent> ++ vip++<esc>
+nnoremap <silent> <C-d> :CocCommand explorer<CR>
+nnoremap ff :call CocAction('format')<CR>
+nnoremap <silent> <c-f> :FZF<CR>
+nmap  <silent>++ vip++<esc>
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
 " remve blank in the end
 nnoremap <silent> <leader>rb :%s/\s\+$//<CR>
@@ -416,12 +419,16 @@ nnoremap <silent> <C-h> <C-w><C-h>
 nnoremap <silent> <C-j> <C-w><C-j>
 nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
-nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+" inoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+" inoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+" vnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+" vnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+nmap ]e <Plug>(coc-diagnostic-next-error)
+nmap ]a <Plug>(coc-diagnostic-next)
+nmap [e <Plug>(coc-diagnostic-prev-error)
+nmap [a <Plug>(coc-diagnostic-prev)
 nnoremap <silent> <F5> :call CompileRunGcc()<CR>
 func! CompileRunGcc()
           exec "w"
@@ -437,17 +444,22 @@ func! CompileRunGcc()
 				  endif
           endif
 		  if &filetype == 'cpp'
-			  exec "AsyncRun -mode=term -rows=5 -raw g++ % && ./a.out"
+			  exec "AsyncRun -mode=term -rows=5 -raw g++ -Wall -O2  $(VIM_FILEPATH) -o $(VIM_FILEDIR)/bin/$(VIM_FILENOEXT) && $(VIM_FILEDIR)/bin/$(VIM_FILENOEXT)"
 		  endif
 endfunc
 inoremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "'.b:vimtex.root.'/figures/"'<CR><CR>:w<CR>
-nnoremap <leader>fi : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
+nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
 " reverse by line number
 nnoremap <leader>rv :g/^/m0<CR>
 "}}}1
 "{{{ misc
+set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf
+set suffixes+=.old
 set nowrap
-" set nu
+set hidden
+set sidescroll=5
+set listchars+=precedes:<,extends:>
+" make scroll nice
 set backspace=indent,eol,start "任何时候都可以输入回车"
 set backspace=2
 set updatetime=300
@@ -460,7 +472,7 @@ set noswapfile
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
-set helplang=cn
+set helplang=en
 set showmatch
 set hlsearch
 set iskeyword+=-,_,\
@@ -472,7 +484,6 @@ set termguicolors
 set scrolloff=5
 set fileencodings=utf-8,gb2312,gbk,cp936,latin-1
 set fileformat=unix
-set formatoptions-=cro " go away auto commenting"
-set nocompatible
+set formatoptions -=cro " go away auto commenting"
 set noshowmode "get ride of -- INSERT -- in lightline"
 set tw=100
