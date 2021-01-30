@@ -97,6 +97,9 @@ Plug 'tpope/vim-commentary'
 " python-syntax-highlight {{{ "
 " Plug 'vim-python/python-syntax' " {'for':'python'}
 Plug 'numirias/semshi'
+let g:semshi#mark_selected_nodes=0
+let g:semshi#no_default_builtin_highlight=1
+let g:semshi#error_sign=0
 " }}} python-syntax-highlight "
 " tabular {{{ "
 Plug 'godlygeek/tabular',{'for':'markdown'}

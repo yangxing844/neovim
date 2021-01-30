@@ -1,5 +1,5 @@
 {
-	"diagnostic.showUnused": false,
+	"diagnostic.showUnused": true,
 	//python
 	"python.formatting.provider": "black",
 	// explorer
@@ -50,7 +50,8 @@
 				".ccls",
 				"compile_commands.json",
 				".git",
-				".vim"
+				".vim",
+				".clang-format"
 			],
 			"initializationOptions": {
 				"cache": {
@@ -61,7 +62,7 @@
 				},
 				"index": {
 					"onChange": false,
-					"initialBlacklist":["."]
+					"initialBlacklist":[".","english"]
 				},
 				"highlight": {
 					"lsRanges": true
@@ -95,6 +96,6 @@
 		"folder": "\uf114",
 		"snippet": "\ue60b",
 		"typeParameter": "\uf728",
-		"default": "\uf29c"
+		"default": "\ue612"
 	}
 }
