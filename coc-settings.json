@@ -1,7 +1,22 @@
 {
-	"diagnostic.showUnused": true,
+	//tex-lab
+	"latex.build.args": [
+		"-verbose",
+		"-file-line-error",
+		"-interaction=nonstopmode",
+		"-synctex=1"
+	],
 	//python
+	"python.linting.flake8Enabled": true,
+	"python.formatting.blackArgs": [
+		"-l",
+		"79"
+	],
 	"python.formatting.provider": "black",
+	"python.linting.flake8Args": [
+		"--format",
+		"black"
+	],
 	// explorer
 	"explorer.width": 30,
 	"explorer.icon.enableNerdfont": true,
@@ -62,12 +77,27 @@
 				},
 				"index": {
 					"onChange": false,
-					"initialBlacklist":[".","english"]
+					"initialBlacklist": [
+						".",
+						"english"
+					]
 				},
 				"highlight": {
 					"lsRanges": true
 				}
 			}
+		},
+		"bash": {
+			"command": "bash-language-server",
+			"args": [
+				"start"
+			],
+			"filetypes": [
+				"sh"
+			],
+			"ignoredRootPaths": [
+				"~"
+			]
 		}
 	},
 	"suggest.completionItemKindLabels": {
