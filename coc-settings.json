@@ -2,7 +2,6 @@
 	//tex-lab
 	"latex.build.args": [
 		"-verbose",
-		"-file-line-error",
 		"-interaction=nonstopmode",
 		"-synctex=1"
 	],

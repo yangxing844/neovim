@@ -101,31 +101,15 @@ Plug 'tpope/vim-commentary'
 
 " }}} Fold description "
 " python-syntax-highlight {{{ "
-Plug 'vim-python/python-syntax',{'for':'python'}
-Plug 'numirias/semshi',{'for':'python'}
+Plug 'vim-python/python-syntax'
+Plug 'numirias/semshi'
+Plug 'chrisbra/Colorizer'
 let g:semshi#always_update_all_highlights=1 "solve foramt color losing"
 let g:semshi#excluded_hl_groups=['local','builtin']
 let g:semshi#mark_selected_nodes=0
 let g:semshi#no_default_builtin_highlight=0
 let g:semshi#error_sign=0
 let g:semshi#simplify_markup = 0
-Plug 'chrisbra/Colorizer'
-function	MycustonHighlight()
-	hi semshiLocal           ctermfg=209 guifg=#ff875f
-	hi semshiGlobal          ctermfg=141 guifg=#db93f9
-	hi semshiImported        ctermfg=214 guifg=#ffaf00 cterm=bold gui=bold
-	hi semshiParameter       ctermfg=75  guifg=#5fafff
-	hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
-	hi semshiFree            ctermfg=218 guifg=#ffafd7
-	hi semshiBuiltin         ctermfg=207 guifg=#ff5fff
-	hi semshiAttribute       ctermfg=117  guifg=#9be9fd
-	hi semshiSelf            ctermfg=249 guifg=#b2b2b2
-	hi semshiUnresolved      ctermfg=226 guifg=#ffff00 cterm=underline gui=underline
-	hi semshiSelected        ctermfg=231 guifg=#ffffff ctermbg=161 guibg=#d7005f
-	hi semshiErrorSign       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
-	hi semshiErrorChar       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
-endfunction
-autocmd ColorScheme * call MycustonHighlight()
 " }}} python-syntax-highlight "
 " tabular {{{ "
 Plug 'godlygeek/tabular',{'for':'markdown'}
@@ -204,11 +188,12 @@ let g:vimtex_fold_types = {
 " let g:vimtex_format_enabled = 1
 let g:vimtex_compiler_progname = 'nvr'
 let g:vimtex_imaps_enabled=0
-let g:tex_fast = "bMpr"
+" let g:tex_fast = "bMpr"
 " }}} vimtex "
 " auto-save {{{ 
 Plug '907th/vim-auto-save'
 let g:auto_save = 1
+let	g:auto_save_events=["CursorHold"]
 " augroup ft_tex
 " 	au!
 " 	au FileType tex let b:auto_save = 0
@@ -220,7 +205,7 @@ let g:UltiSnipsExpandTrigger = '<tab>'
 let g:UltiSnipsJumpForwardTrigger = '<tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 nnoremap <leader>es :UltiSnipsEdit!<cr>
-
+let g:UltiSnipsEditSplit='vertical'
 " }}} UltiSnips "
 " fzf {{{ 
 Plug 'junegunn/fzf', {
@@ -306,13 +291,11 @@ let g:cpp_class_decl_highlight = 1
 call plug#end()
 "}}}1
 "{{{1 UI
-let g:python_highlight_all = 1
 colorscheme dracula
 set guifont=Firacode\ Nerd\ Font\ Mono:h15:w53
 set mouse=vn
 " used to remove tilde in vim empty buffer
 hi NonText guifg=bg
-set showcmd
 " {{{2  function Foldtext
 function! Foldtext()
   let level = repeat('-', min([v:foldlevel-1,3])) . '+'
@@ -322,7 +305,6 @@ function! Foldtext()
 endfunction
 set foldtext=Foldtext()
 set foldcolumn=0
-set foldlevelstart=0
 set fillchars=vert:│,fold:\ ,diff:⣿
 "}}}2
 "}}}1
@@ -358,12 +340,15 @@ endif
 
 " }}} fcitx input method "
 set foldmethod=marker
-au BufNewFile,BufRead *.tex
-    \ let g:loaded_matchparen=1 |
-	\ let b:AutoPairs =  {'(':')', '[':']', '{':'}','"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''",'$':'$'} |
+" au BufNewFile,BufRead *.tex
+"     \ let g:loaded_matchparen=1 |
+" 	\ let b:AutoPairs =  {'(':')', '[':']', '{':'}','"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''",'$':'$'} |
 au VimLeave * set guicursor=a:hor1 " auto cmd to restore cursor"
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o "disable auto commenting"
-autocmd BufReadPost * exe "normal! g\`\." 
+autocmd FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
 "}}}1
 "{{{1keymapping
 "dealing with wrapped lines
@@ -478,7 +463,6 @@ nnoremap <leader>rv :g/^/m0<CR>
 set undofile	" keep an undo file (undo changes after closing)
 set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf
 set suffixes+=.old
-set nowrap
 set hidden
 set sidescroll=5
 set listchars+=precedes:<,extends:>
@@ -498,7 +482,7 @@ set copyindent
 set shiftwidth=4
 set showmatch
 set hlsearch
-set iskeyword+=-,_,\
+set iskeyword+=-,_
 set cindent
 set autowrite
 set clipboard=unnamedplus
@@ -507,6 +491,6 @@ set scrolloff=5
 set fileencodings=utf-8,gb2312,gbk,cp936,latin-1
 set fileformat=unix
 set noshowmode "get ride of -- INSERT -- in lightline"
-set tw=79
 set linebreak
 set helplang=en
+set showcmd
