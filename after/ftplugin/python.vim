@@ -16,4 +16,5 @@ function	MycustonHighlight()
 	hi semshiErrorChar       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
 endfunction
 call MycustonHighlight()
-
+setlocal foldmethod=indent
+setlocal foldlevel=99

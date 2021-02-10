@@ -1,9 +1,10 @@
-"               _
-"	   __   __ (_)  _ __ ___    _ __    ___
-"	   \ \ / / | | | '_ ` _ \  | '__|  / __|
-"	_   \ V /  | | | | | | | | | |    | (__
-"  (_)   \_/   |_| |_| |_| |_| |_|     \___|
-
+ " ___      ___ ___  _____ ______   ________  ________     
+ " |\  \    /  /|\  \|\   _ \  _   \|\   __  \|\   ____\    
+ " \ \  \  /  / | \  \ \  \\\__\ \  \ \  \|\  \ \  \___|    
+  " \ \  \/  / / \ \  \ \  \\|__| \  \ \   _  _\ \  \       
+ " __\ \    / /   \ \  \ \  \    \ \  \ \  \\  \\ \  \____  
+" |\__\ \__/ /     \ \__\ \__\    \ \__\ \__\\ _\\ \_______\
+" \|__|\|__|/       \|__|\|__|     \|__|\|__|\|__|\|_______|
 let mapleader="\<space>"
 "{{{1 Load plugins
 call plug#begin('~/.vim/plugged')
@@ -39,48 +40,20 @@ let g:coc_global_extensions = [
   \ ]
 nmap <leader>rn <Plug>(coc-rename)
 autocmd CursorHold * silent call CocActionAsync('highlight')
-nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gd :call CocActionAsync('jumpDefinition')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nnoremap <silent>K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
+	if (index(['vim','help'], &filetype) >= 0)
+		execute 'h '.expand('<cword>')
+	elseif (coc#rpc#ready())
+		call CocActionAsync('doHover')
+	else
+		execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
-"explorer
-" let g:coc_explorer_global_presets = {  
-" \   '.vim': {
-" \     'root-uri': '~/.vim',
-" \   },
-" \   'floating': {
-" \     'position': 'floating',
-" \     'open-action-strategy': 'sourceWindow',
-" \   },
-" \   'floatingTop': {
-" \     'position': 'floating',
-" \     'floating-position': 'center-top',
-" \     'open-action-strategy': 'sourceWindow',
-" \   },
-" \   'floatingLeftside': {
-" \     'position': 'floating',
-" \     'floating-position': 'left-center',
-" \     'floating-width': 50,
-" \     'open-action-strategy': 'sourceWindow',
-" \   },
-" \   'floatingRightside': {
-" \     'position': 'floating',
-" \     'floating-position': 'right-center',
-" \     'floating-width': 50,
-" \     'open-action-strategy': 'sourceWindow',
-" \   },
-" \   'simplify': {
-" \     'file-child-template': '[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1]'
-" \   }
-" \ }
 "}}}2
 " vim-devicons {{{ "
 Plug 'ryanoasis/vim-devicons'
@@ -89,9 +62,9 @@ Plug 'ryanoasis/vim-devicons'
 " vim-gitgutter {{{ "
 Plug 'airblade/vim-gitgutter'
 let g:gitgutter_preview_win_floating = 1
-let g:gitgutter_sign_added              = '|'
-let g:gitgutter_sign_modified           = '*'
-let g:gitgutter_sign_removed            = '_'
+let g:gitgutter_sign_added              = ''
+let g:gitgutter_sign_modified           = ''
+let g:gitgutter_sign_removed            = ''
 let g:gitgutter_sign_removed_first_line = '‾'
 let g:gitgutter_sign_removed_above_and_below = '_¯'
 let g:gitgutter_sign_modified_removed   = '~_'
@@ -112,16 +85,15 @@ let g:semshi#error_sign=0
 let g:semshi#simplify_markup = 0
 " }}} python-syntax-highlight "
 " tabular {{{ "
-Plug 'godlygeek/tabular',{'for':'markdown'}
+Plug 'godlygeek/tabular'
 
 " }}} tabular "
 " vim-markdown {{{ "
-Plug 'plasticboy/vim-markdown',{'for':'markdown'}
-
+Plug 'plasticboy/vim-markdown'
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_conceal_code_blocks = 1
 " }}} vim-markdown "
-" vimdoc {{{ "
-" Plug 'yianwillis/vimcdoc'
-" }}} vimdoc "
 " statusline {{{ 
 Plug 'itchyny/lightline.vim'
 let g:lightline = {
@@ -164,7 +136,6 @@ Plug 'skywind3000/asyncrun.vim'
 " Plug 'KeitaNakamura/tex-conceal.vim',{'for':'tex'}
 " let g:tex_conceal="abdgm"
 " let g:tex_conceal_frac=1
-" set conceallevel=2
 
 " }}} tex-conceal "
 " vimtex {{{ 
@@ -214,7 +185,7 @@ Plug 'junegunn/fzf', {
       \}
 Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
-let $FZF_DEFAULT_COMMAND='rg --files --hidden -g "!.git" -g "!.cache" -g "!.cargo" '
+let $FZF_DEFAULT_COMMAND="rg --files "
 let g:fzf_layout = {'window': {'width': 0.8, 'height': 0.75} }
 let g:fzf_colors = {
       \ 'fg':      ['fg', 'Normal'],
@@ -233,7 +204,7 @@ let g:fzf_colors = {
       \}
 
 let g:fzf_mru_no_sort = 1
-let g:fzf_mru_exclude = '\v' . join([
+let g:fzf_mru_include = '\v' . join([
       \ '\.git/',
       \], '|')
 " let g:fzf_mru_relative = 1
@@ -288,6 +259,9 @@ let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 " }}} c++ highlight "
+" java-Script {{{ "
+Plug 'pangloss/vim-javascript'
+" }}} java-Script "
 call plug#end()
 "}}}1
 "{{{1 UI
@@ -402,14 +376,12 @@ nnoremap dg* g*``dgn
 nnoremap dg# g*``dgN
 nnoremap gV  `[V`]
 nnoremap <silent> <C-d> :CocCommand explorer<CR>
-nnoremap ff :call CocAction('format')<CR>
+nnoremap <silent>ff :call CocActionAsync('format')<CR>
 nnoremap <silent> <c-f> :FZF<CR>
-nmap  <silent>++ vip++<esc>
+nnoremap <silent>++ vip++<esc>
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
 " remve blank in the end
-nnoremap <silent> <leader>rb :%s/\s\+$//<CR>
 map <F1> :call UltiSnips#RefreshSnippets() <CR>
-map <F2> :browse oldfiles <CR>
 nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
 nnoremap <silent> <leader>ev :edit $MYVIMRC <CR>
 nnoremap U <C-r>
@@ -460,7 +432,7 @@ nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" 
 nnoremap <leader>rv :g/^/m0<CR>
 "}}}1
 "{{{ misc
-set undofile	" keep an undo file (undo changes after closing)
+" set undofile	" keep an undo file (undo changes after closing)
 set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf
 set suffixes+=.old
 set hidden
@@ -494,3 +466,4 @@ set noshowmode "get ride of -- INSERT -- in lightline"
 set linebreak
 set helplang=en
 set showcmd
+set conceallevel=3
