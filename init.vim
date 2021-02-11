@@ -38,7 +38,6 @@ endif
 let g:coc_global_extensions = [
   \ 'coc-eslint',
   \ ]
-nmap <leader>rn <Plug>(coc-rename)
 autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <silent> gd :call CocActionAsync('jumpDefinition')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -275,7 +274,7 @@ function! Foldtext()
   let level = repeat('-', min([v:foldlevel-1,3])) . '+'
   let title = substitute(getline(v:foldstart), '{\{3}\d\?\s*', '', '')
   let title = substitute(title, '^["#! ]\+', '', '')
-  return printf('%-4s %-s', level, title)
+  return printf('%-4s %-s...', level, title)
 endfunction
 set foldtext=Foldtext()
 set foldcolumn=0
@@ -376,7 +375,8 @@ nnoremap dg* g*``dgn
 nnoremap dg# g*``dgN
 nnoremap gV  `[V`]
 nnoremap <silent> <C-d> :CocCommand explorer<CR>
-nnoremap <silent>ff :call CocActionAsync('format')<CR>
+"right now there is no need for format selected
+nnoremap <C-I> :call CocActionAsync('format')<CR> 
 nnoremap <silent> <c-f> :FZF<CR>
 nnoremap <silent>++ vip++<esc>
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
@@ -398,6 +398,8 @@ nnoremap <silent> <C-h> <C-w><C-h>
 nnoremap <silent> <C-j> <C-w><C-j>
 nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
+"a much more universal way of rename
+nnoremap <silent> <F2> <Plug>(coc-rename)
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 " inoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
