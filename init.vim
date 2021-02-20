@@ -5,11 +5,11 @@
  " __\ \    / /   \ \  \ \  \    \ \  \ \  \\  \\ \  \____  
 " |\__\ \__/ /     \ \__\ \__\    \ \__\ \__\\ _\\ \_______\
 " \|__|\|__|/       \|__|\|__|     \|__|\|__|\|__|\|_______|
-let mapleader="\<space>"
 "{{{1 Load plugins
 call plug#begin('~/.vim/plugged')
 "" vim-sensible {{{ "
 Plug 'tpope/vim-sensible'
+let mapleader="\<space>"
 "" }}} vim-sensible "
 " dracula {{{ "
 Plug 'dracula/vim', { 'as': 'dracula' }
@@ -19,7 +19,7 @@ let g:dracula_underline = 0
 Plug 'honza/vim-snippets'
 
 " }}} vim-snippets "
-"{{{2   coc Plugin
+"{{{2   Coc Plugin
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 inoremap <silent><expr> <c-j>
       \ pumvisible() ? "\<C-n>" :
@@ -42,7 +42,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <silent> gd :call CocActionAsync('jumpDefinition')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+"no longer jump to definition
+nmap <silent> gr <Plug>(coc-references-used) 
 nnoremap <silent>K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
 	if (index(['vim','help'], &filetype) >= 0)
@@ -61,9 +62,9 @@ Plug 'ryanoasis/vim-devicons'
 " vim-gitgutter {{{ "
 Plug 'airblade/vim-gitgutter'
 let g:gitgutter_preview_win_floating = 1
-let g:gitgutter_sign_added              = ''
-let g:gitgutter_sign_modified           = ''
-let g:gitgutter_sign_removed            = ''
+let g:gitgutter_sign_added              = '+'
+let g:gitgutter_sign_modified           = '*'
+let g:gitgutter_sign_removed            = '-'
 let g:gitgutter_sign_removed_first_line = '‾'
 let g:gitgutter_sign_removed_above_and_below = '_¯'
 let g:gitgutter_sign_modified_removed   = '~_'
@@ -268,7 +269,7 @@ colorscheme dracula
 set guifont=Firacode\ Nerd\ Font\ Mono:h15:w53
 set mouse=vn
 " used to remove tilde in vim empty buffer
-hi NonText guifg=bg
+" hi NonText guifg=bg
 " {{{2  function Foldtext
 function! Foldtext()
   let level = repeat('-', min([v:foldlevel-1,3])) . '+'
@@ -313,15 +314,13 @@ endif
 
 " }}} fcitx input method "
 set foldmethod=marker
-" au BufNewFile,BufRead *.tex
-"     \ let g:loaded_matchparen=1 |
-" 	\ let b:AutoPairs =  {'(':')', '[':']', '{':'}','"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''",'$':'$'} |
 au VimLeave * set guicursor=a:hor1 " auto cmd to restore cursor"
 autocmd FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
 autocmd BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
+autocmd TermOpen * startinsert 
 "}}}1
 "{{{1keymapping
 "dealing with wrapped lines
@@ -376,12 +375,14 @@ nnoremap dg# g*``dgN
 nnoremap gV  `[V`]
 nnoremap <silent> <C-d> :CocCommand explorer<CR>
 "right now there is no need for format selected
-nnoremap <C-I> :call CocActionAsync('format')<CR> 
+nnoremap ff :call CocActionAsync('format')<CR> 
+vnoremap ff <Plug>(coc-format-selected)
 nnoremap <silent> <c-f> :FZF<CR>
 nnoremap <silent>++ vip++<esc>
+"if the last window is explorer quit the window
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
 " remve blank in the end
-map <F1> :call UltiSnips#RefreshSnippets() <CR>
+nnoremap <F1> :call UltiSnips#RefreshSnippets() <CR>
 nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
 nnoremap <silent> <leader>ev :edit $MYVIMRC <CR>
 nnoremap U <C-r>
@@ -393,6 +394,7 @@ inoremap <C-a> <C-o>^
 vnoremap <c-e> $
 vnoremap <c-a> ^
 nnoremap <silent> `` :on<CR>
+tnoremap <Esc> <C-\><C-n>
 nnoremap <silent> <backspace> za
 nnoremap <silent> <C-h> <C-w><C-h>
 nnoremap <silent> <C-j> <C-w><C-j>
@@ -425,7 +427,7 @@ func! CompileRunGcc()
 				  endif
           endif
 		  if &filetype == 'cpp'
-			  exec "AsyncRun -mode=term -rows=5 -raw g++ -Wall -O2  $(VIM_FILEPATH)  && ./a.out"
+			  exec "AsyncRun -mode=term -rows=5 -raw g++ -Wall -O2 -g  $(VIM_FILEPATH)  && ./a.out"
 		  endif
 endfunc
 inoremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "'.b:vimtex.root.'/figures/"'<CR><CR>:w<CR>
