@@ -426,7 +426,7 @@ func! CompileRunGcc()
                           exec "AsyncRun -mode=term -rows=5 -raw -focus=0 python3 %"
 				  endif
           endif
-		  if &filetype == 'cpp'
+		  if &filetype == 'cpp' || &filetype == 'c'
 			  exec "AsyncRun -mode=term -rows=5 -raw g++ -Wall -O2 -g  $(VIM_FILEPATH)  && ./a.out"
 		  endif
 endfunc
