@@ -1,16 +1,11 @@
- " ___      ___ ___  _____ ______   ________  ________     
- " |\  \    /  /|\  \|\   _ \  _   \|\   __  \|\   ____\    
- " \ \  \  /  / | \  \ \  \\\__\ \  \ \  \|\  \ \  \___|    
-  " \ \  \/  / / \ \  \ \  \\|__| \  \ \   _  _\ \  \       
- " __\ \    / /   \ \  \ \  \    \ \  \ \  \\  \\ \  \____  
-" |\__\ \__/ /     \ \__\ \__\    \ \__\ \__\\ _\\ \_______\
-" \|__|\|__|/       \|__|\|__|     \|__|\|__|\|__|\|_______|
+"    ██╗   ██╗██╗███╗   ███╗██████╗  ██████╗
+"    ██║   ██║██║████╗ ████║██╔══██╗██╔════╝
+"    ██║   ██║██║██╔████╔██║██████╔╝██║     
+"    ╚██╗ ██╔╝██║██║╚██╔╝██║██╔══██╗██║     
+" ██╗ ╚████╔╝ ██║██║ ╚═╝ ██║██║  ██║╚██████╗
+let mapleader="\<space>"
 "{{{1 Load plugins
 call plug#begin('~/.vim/plugged')
-"" vim-sensible {{{ "
-Plug 'tpope/vim-sensible'
-let mapleader="\<space>"
-"" }}} vim-sensible "
 " dracula {{{ "
 Plug 'dracula/vim', { 'as': 'dracula' }
 let g:dracula_underline = 0
@@ -61,17 +56,9 @@ Plug 'ryanoasis/vim-devicons'
 " }}} vim-devicons "
 " vim-gitgutter {{{ "
 Plug 'airblade/vim-gitgutter'
-let g:gitgutter_preview_win_floating = 1
-let g:gitgutter_sign_added              = '+'
-let g:gitgutter_sign_modified           = '*'
-let g:gitgutter_sign_removed            = '-'
-let g:gitgutter_sign_removed_first_line = '‾'
-let g:gitgutter_sign_removed_above_and_below = '_¯'
-let g:gitgutter_sign_modified_removed   = '~_'
 " }}} vim-gitgutter "
 " vim-commentary {{{ "
 Plug 'tpope/vim-commentary'
-
 " }}} Fold description "
 " python-syntax-highlight {{{ "
 Plug 'vim-python/python-syntax'
@@ -86,7 +73,6 @@ let g:semshi#simplify_markup = 0
 " }}} python-syntax-highlight "
 " tabular {{{ "
 Plug 'godlygeek/tabular'
-
 " }}} tabular "
 " vim-markdown {{{ "
 Plug 'plasticboy/vim-markdown'
@@ -165,10 +151,6 @@ let g:vimtex_imaps_enabled=0
 Plug '907th/vim-auto-save'
 let g:auto_save = 1
 let	g:auto_save_events=["CursorHold"]
-" augroup ft_tex
-" 	au!
-" 	au FileType tex let b:auto_save = 0
-" augroup END
 " }}} auto-save "
 " UltiSnips {{{ 
 Plug 'sirver/ultisnips'
@@ -268,8 +250,6 @@ call plug#end()
 colorscheme dracula
 set guifont=Firacode\ Nerd\ Font\ Mono:h15:w53
 set mouse=vn
-" used to remove tilde in vim empty buffer
-" hi NonText guifg=bg
 " {{{2  function Foldtext
 function! Foldtext()
   let level = repeat('-', min([v:foldlevel-1,3])) . '+'
@@ -400,6 +380,8 @@ nnoremap <silent> <C-h> <C-w><C-h>
 nnoremap <silent> <C-j> <C-w><C-j>
 nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
+tnoremap <silent> <C-j> <C-\><C-n><C-w><C-j>a
+tnoremap <silent> <C-k> <C-\><C-n><C-w><C-k>a
 "a much more universal way of rename
 nnoremap <silent> <F2> <Plug>(coc-rename)
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"

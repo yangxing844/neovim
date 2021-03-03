@@ -1,5 +1,6 @@
 {
 	"suggest.noselect": false,
+	"diagnostic.showUnused": false,
 	//tex-lab
 	"latex.build.args": [
 		"-verbose",
@@ -14,8 +15,6 @@
 	],
 	"python.formatting.provider": "black",
 	"python.linting.flake8Args": [
-		"--format",
-		"black",
 		"--extend-ignore errors=E51,E4"
 	],
 	// explorer
