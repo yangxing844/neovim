@@ -34,19 +34,23 @@ let g:coc_global_extensions = [
   \ 'coc-eslint',
   \ ]
 autocmd CursorHold * silent call CocActionAsync('highlight')
-nmap <silent> gd :call CocActionAsync('jumpDefinition')<CR>
+nnoremap <silent> gd :call CocActionAsync('jumpDefinition')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 "no longer jump to definition
-nmap <silent> gr <Plug>(coc-references-used) 
+nnoremap <silent> gr :call CocActionAsync('jumpUsed')<CR>
 nnoremap <silent>K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
-	if (index(['vim','help'], &filetype) >= 0)
-		execute 'h '.expand('<cword>')
-	elseif (coc#rpc#ready())
-		call CocActionAsync('doHover')
-	else
-		execute '!' . &keywordprg . " " . expand('<cword>')
+  if index(['vim', 'help'], &filetype) >= 0
+    execute 'help ' . expand('<cword>')
+  elseif &filetype ==# 'neomuttrc'
+    let l:cword = expand('<cword>')
+    Man neomuttrc
+    call search(l:cword)
+  elseif &filetype ==# 'tex'
+    VimtexDocPackage
+  else
+    call CocAction('doHover')
   endif
 endfunction
 "}}}2
@@ -119,17 +123,18 @@ endfunction
 Plug 'skywind3000/asyncrun.vim'
 " }}} asyncrun "
 " tex-conceal {{{ 
-" Plug 'KeitaNakamura/tex-conceal.vim',{'for':'tex'}
-" let g:tex_conceal="abdgm"
-" let g:tex_conceal_frac=1
+Plug 'KeitaNakamura/tex-conceal.vim',{'for':'tex'}
+let g:tex_conceal="abdgm"
+let g:tex_conceal_frac=1
 
 " }}} tex-conceal "
 " vimtex {{{ 
-Plug 'lervag/vimtex',{'for':'tex'}
-let g:tex_flavor='AMStex'
+Plug 'lervag/vimtex'
+let g:tex_flavor='plain'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_view_automatic = 0
-let g:vimtex_quickfix_mode = 0
+let g:vimtex_quickfix_mode = 2
+let g:vimtex_quickfix_open_on_warning=0
 let g:vimtex_matchparen_enabled = 0
 nnoremap <localleader>lt :call vimtex#fzf#run()<cr>
 let g:vimtex_compiler_latexmk_engines = {
@@ -142,10 +147,7 @@ let g:vimtex_fold_types = {
       \ 'markers' : {'enabled': 1},
 	  \ 'sections' : {'parse_levels': 1}
       \}
-" let g:vimtex_format_enabled = 1
 let g:vimtex_compiler_progname = 'nvr'
-let g:vimtex_imaps_enabled=0
-" let g:tex_fast = "bMpr"
 " }}} vimtex "
 " auto-save {{{ 
 Plug '907th/vim-auto-save'
@@ -263,17 +265,12 @@ set fillchars=vert:│,fold:\ ,diff:⣿
 "}}}2
 "}}}1
 "{{{1 performance
-set nocursorline
-set undolevels=100
-set title
-set history=100
-set timeoutlen=500
 " fcitx input method {{{
 if has('unix')
-let g:input_toggle = 1
+let g:input_toggle = 0
 function! Fcitx2en()
    let s:input_status = system("fcitx5-remote")
-   if s:input_status == 2  "2 代表英文"
+   if s:input_status == 2 
       let g:input_toggle = 1
       let l:a = system("fcitx5-remote -c")
    endif
@@ -287,7 +284,6 @@ function! Fcitx2zh()
    endif
 endfunction
 
-"set timeoutlen=150
 autocmd InsertLeave * call Fcitx2en()
 autocmd InsertEnter * call Fcitx2zh()
 endif
@@ -302,47 +298,11 @@ autocmd BufReadPost *
      \ endif
 autocmd TermOpen * startinsert 
 "}}}1
-"{{{1keymapping
-"dealing with wrapped lines
-noremap <silent> <Leader>w :call ToggleWrap()<CR>
-function ToggleWrap() "{{{2
-  if &wrap
-    echo "Wrap OFF"
-    setlocal nowrap
-    set virtualedit=all
-    silent! nunmap <buffer> <Up>
-    silent! nunmap <buffer> <Down>
-    silent! nunmap <buffer> <Home>
-    silent! nunmap <buffer> <End>
-    silent! iunmap <buffer> <Up>
-    silent! iunmap <buffer> <Down>
-    silent! iunmap <buffer> <Home>
-    silent! iunmap <buffer> <End>
-  else
-    echo "Wrap ON"
-    setlocal wrap linebreak nolist
-    set virtualedit=
-    setlocal display+=lastline
-    noremap  <buffer> <silent> <Up>   gk
-    noremap  <buffer> <silent> <Down> gj
-    noremap  <buffer> <silent> <Home> g<Home>
-    noremap  <buffer> <silent> <End>  g<End>
-    inoremap <buffer> <silent> <Up>   <C-o>gk
-    inoremap <buffer> <silent> <Down> <C-o>gj
-    inoremap <buffer> <silent> <Home> <C-o>g<Home>
-    inoremap <buffer> <silent> <End>  <C-o>g<End>
-  endif
-endfunction
-"2}}}
-noremap <silent> k gk
-noremap <silent> j gj
-noremap <silent> 0 g0
-noremap <silent> $ gj
-set nowrap
+"{{{1key-binding
 cnoremap w!! execute 'silent! write !SUDO_ASKPASS=`which qt4-ssh-askpass` sudo tee % >/dev/null' <bar> edit!
 " Buffer navigation
 nnoremap <silent> gb    :bnext<cr>
-nnoremap <silent> gB    :bprevious<cr>
+nnoremap <silent> gp    :bprevious<cr>
 " Utility maps for repeatable quickly change/delete current word
 nnoremap c*   *``cgn
 nnoremap c#   *``cgN
@@ -353,7 +313,8 @@ nnoremap d#   *``dgN
 nnoremap dg* g*``dgn
 nnoremap dg# g*``dgN
 nnoremap gV  `[V`]
-nnoremap <silent> <C-d> :CocCommand explorer<CR>
+nnoremap <silent> <c-s> :CocCommand explorer<CR>
+nnoremap <silent> <leader>b :Buffers<CR>
 "right now there is no need for format selected
 nnoremap ff :call CocActionAsync('format')<CR> 
 vnoremap ff <Plug>(coc-format-selected)
@@ -365,14 +326,11 @@ autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | end
 nnoremap <F1> :call UltiSnips#RefreshSnippets() <CR>
 nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
 nnoremap <silent> <leader>ev :edit $MYVIMRC <CR>
+nnoremap <silent> <leader>ez :edit ~/.zshrc <CR>
 nnoremap U <C-r>
 nnoremap Y y$
-nnoremap <c-e> $
 inoremap <C-e> <C-o>$
-nnoremap <c-a> ^
 inoremap <C-a> <C-o>^
-vnoremap <c-e> $
-vnoremap <c-a> ^
 nnoremap <silent> `` :on<CR>
 tnoremap <Esc> <C-\><C-n>
 nnoremap <silent> <backspace> za
@@ -382,14 +340,9 @@ nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
 tnoremap <silent> <C-j> <C-\><C-n><C-w><C-j>a
 tnoremap <silent> <C-k> <C-\><C-n><C-w><C-k>a
-"a much more universal way of rename
 nnoremap <silent> <F2> <Plug>(coc-rename)
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-" inoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-" inoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-" vnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-" vnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 nmap ]e <Plug>(coc-diagnostic-next-error)
 nmap ]a <Plug>(coc-diagnostic-next)
 nmap [e <Plug>(coc-diagnostic-prev-error)
@@ -411,6 +364,9 @@ func! CompileRunGcc()
 		  if &filetype == 'cpp' || &filetype == 'c'
 			  exec "AsyncRun -mode=term -rows=5 -raw g++ -Wall -O2 -g  $(VIM_FILEPATH)  && ./a.out"
 		  endif
+		  if &filetype == 'sh'
+			  exec "AsyncRun -mode=term -rows=5 -raw %"
+		  endif
 endfunc
 inoremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "'.b:vimtex.root.'/figures/"'<CR><CR>:w<CR>
 nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
@@ -418,38 +374,19 @@ nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" 
 nnoremap <leader>rv :g/^/m0<CR>
 "}}}1
 "{{{ misc
-" set undofile	" keep an undo file (undo changes after closing)
-set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf
-set suffixes+=.old
-set hidden
-set sidescroll=5
-set listchars+=precedes:<,extends:>
-" make scroll nice
-set backspace=indent,eol,start "任何时候都可以输入回车"
-set backspace=2
+set confirm nowrap
+set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf suffixes+=.old
+set hidden undolevels=100 title history=1000 timeoutlen=500
+set sidescroll=5 listchars+=precedes:<,extends:>
+set backspace=indent,eol,start backspace=2
 set updatetime=300
-set autoindent
+set autoindent cindent copyindent
 set shortmess+=c
-set nobackup
-set nowritebackup
-set noswapfile
-set autochdir
-set tabstop=4
-set softtabstop=4
-set copyindent
-set shiftwidth=4
-set showmatch
-set hlsearch
-set iskeyword+=-,_
-set cindent
-set autowrite
+set nobackup nowritebackup noswapfile
+set tabstop=4 softtabstop=4 shiftwidth=4
+set showmatch hlsearch
 set clipboard=unnamedplus
 set termguicolors
-set scrolloff=5
-set fileencodings=utf-8,gb2312,gbk,cp936,latin-1
-set fileformat=unix
-set noshowmode "get ride of -- INSERT -- in lightline"
-set linebreak
-set helplang=en
-set showcmd
-set conceallevel=3
+set fileencodings=utf-8 fileformat=unix
+set noshowmode showcmd
+set linebreak conceallevel=1

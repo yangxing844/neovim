@@ -20,9 +20,8 @@ snippet template "Basic template" b
 \documentclass[a4paper]{article}
 \usepackage{textcomp}
 \usepackage{fontspec}
-\usepackage{ctex}
-\setCJKmainfont{Noto Serif CJK SC}
-\usepackage{amsmath, amssymb}
+%\usepackage[inlimits]{amsmath,
+%\usepackage{amssymb}
 \usepackage{physics}
 \usepackage{graphicx}
 % \usepackage{siunitx}
@@ -123,7 +122,7 @@ snippet / "Fraction" i
 endsnippet
 
 context "math()"
-snippet '((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/' "symbol frac" wrA
+snippet '(\\\S+)/' "symbol frac" wrA
 \\dfrac{`!p snip.rv = match.group(1)`}{$1}$0
 endsnippet
 
@@ -213,10 +212,6 @@ endsnippet
 
 snippet prod "product" w
 \prod_{${1:n=${2:1}}}^{${3:\infty}} ${4:${VISUAL}} $0
-endsnippet
-
-snippet part "d/dx" w
-\pdv{${1:V}}{${2:x}} $0
 endsnippet
 
 context "math()"
@@ -427,14 +422,14 @@ endsnippet
 
 priority 10
 context "math()"
-snippet "hat" "hat" riA
+snippet "\bhat" "hat" riA
 \hat{$1}$0
 endsnippet
 
 priority 100
 context "math()"
-snippet "([a-zA-Z])hat" "hat" riA
-\hat{`!p snip.rv=match.group(1)`}
+snippet "(\b)([a-zA-Z])hat" "hat" riA
+\hat{`!p snip.rv=match.group(2)`}
 endsnippet
 
 snippet letw "let omega" iA
@@ -485,7 +480,7 @@ endsnippet
 
 context "math()"
 snippet "(\\?\w+)(,\.|\.,)" "Vector postfix" riA
-\vec{`!p snip.rv=match.group(1)`}$0
+\bm{`!p snip.rv=match.group(1)`}$0
 endsnippet 
 
 context "math()"
@@ -494,7 +489,7 @@ snippet d; "Description" iA
 endsnippet
 
 context "math()"
-snippet hb "Description" iA
+snippet '\bhb' "Description" irA
 \hbar$0
 endsnippet
 
@@ -507,6 +502,7 @@ snippet w; "Description" iA
 \omega$0
 endsnippet
 
+context "math()"
 snippet a; "alpha" iA
 \alpha$0
 endsnippet
@@ -554,10 +550,6 @@ $1
 endsnippet 
 
 context "math()"
-snippet 'curl([A-Za-z])' "curl of something" wr
-\pdv[2]{`!p snip.rv = match.group(1)`_{$2}}{$1}-\pdv[2]{`!p snip.rv = match.group(1)`_{$1}}{$2}$0
-endsnippet
-
 snippet g; "\gamma" iA
 \gamma$0
 endsnippet
@@ -572,18 +564,22 @@ snippet '<([\s\S]+)(\|)' "Description" wrA
 \bra{`!p snip.rv = match.group(1)`}
 endsnippet
 
+context "math()"
 snippet b;  "\beta" iA
 \beta$0
 endsnippet
 
+context "math()"
 snippet f; "phi" iA
 \phi$0
 endsnippet
 
+context "math()"
 snippet k; "Description" iA
 \kappa$0
 endsnippet
 
+context "math()"
 snippet T; "Description" iA
 \Theta$0
 endsnippet
