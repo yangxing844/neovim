@@ -1,22 +1,16 @@
 global !p
-texMathZones = ['texMathZone' + x for x in ['', 'X', 'XX', 'Env', 'EnvStarred', 'Ensured']]
-texIgnoreMathZones = ['texMathTextArg']
-
-texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
-
-ignore = texIgnoreMathZoneIds[0]
-
-def math():
-	synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
-	try:
-		first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
-		return first != ignore
-	except StopIteration: 
-		return False 
+def math(): 
+	return vim.eval('vimtex#syntax#in_mathzone()') == '1' 
+def comment():  
+	return vim.eval('vimtex#syntax#in_comment()') == '1' 
+def env(name): 
+	[x,y] = vim.eval("vimtex#env#is_inside('" + name + "')")  
+	return x != '0' and x != '0' 
 endglobal
 
 snippet template "Basic template" b
+% !Mode:: "TeX:UTF-8"
+% !TEX program  = xelatex
 \documentclass[a4paper]{article}
 \usepackage{textcomp}
 \usepackage{fontspec}
@@ -114,16 +108,21 @@ endsnippet
 
 context "math()"
 snippet // "Fraction" iA
-\\dfrac{$1}{$2}$0
-endsnippet
-
-snippet / "Fraction" i
-\\dfrac{${VISUAL}}{$1}$0
+\frac{$1}{$2}$0
 endsnippet
 
 context "math()"
-snippet '(\\\S+)/' "symbol frac" wrA
-\\dfrac{`!p snip.rv = match.group(1)`}{$1}$0
+snippet nfr "nicefrac" iA
+\nicefrac{$1}{$2}$0
+endsnippet
+
+snippet / "Fraction" i
+\frac{${VISUAL}}{$1}$0
+endsnippet
+
+context "math()"
+snippet '([^$=()+-/\s-]+)/' "symbol frac" wrA
+\frac{`!p snip.rv = match.group(1)`}{$1}$0
 endsnippet
 
 priority 1000
@@ -138,7 +137,7 @@ while True:
 	if stripped[i] == '(': depth -= 1
 	if depth == 0: break;
 	i-=1
-snip.rv = stripped[0:i] + "\\dfrac{" + stripped[i+1:-1] + "}"
+snip.rv = stripped[0:i] + "\\frac{" + stripped[i+1:-1] + "}"
 `{$1}$0
 endsnippet
 
@@ -185,7 +184,7 @@ snip.rv = subprocess.check_output(['wolframscript', '-code', code])
 endsnippet
 
 snippet == "equals" iA
-&= $1 \\\\
+&= $1 
 endsnippet
 
 snippet != "equals" iA
@@ -215,7 +214,7 @@ snippet prod "product" w
 endsnippet
 
 context "math()"
-snippet sq "\sqrt{}" iA
+snippet sq "\sqrt{}" wA
 \sqrt{${1:${VISUAL}}} $0
 endsnippet
 
@@ -449,7 +448,7 @@ snippet cl "" i
 {\color{$1}{${2:${VISUAL:default}}}}$0
 endsnippet
 
-snippet lab "Description" b
+snippet lab "Description" i
 ${VISUAL:default} \label{${VISUAL:default}}$0
 endsnippet
 
@@ -490,7 +489,7 @@ endsnippet
 
 context "math()"
 snippet '\bhb' "Description" irA
-\hbar$0
+\hbar
 endsnippet
 
 snippet Sch "Description" i
@@ -535,7 +534,7 @@ endsnippet
 
 context "math()"
 snippet C "Constant" wb
-\dfrac{1}{4\pi \varepsilon_0}$0
+\frac{1}{4\pi \varepsilon_0}$0
 endsnippet
 
 context "math()"
@@ -582,5 +581,39 @@ endsnippet
 context "math()"
 snippet T; "Description" iA
 \Theta$0
+endsnippet
+
+context "math()"
+snippet O; "\Omega" iA
+\Omega$0
+endsnippet
+
+context "math()"
+snippet D; "\Omega" iA
+\Delta$0
+endsnippet
+
+snippet textnomeaning "some text without a meaning" b
+Hello, here is some text without a meaning.  This text should show
+what a printed text will look like at this place. If you read this
+text, you will get no information. Really? Is there no information?
+Is there a difference between this text and some nonsense like
+‘‘Huardest gefburn’’? Kjift -- not at all! A blind text like this
+gives you information about the selected font, how the letters are
+written and an impression of the look.
+endsnippet
+	
+
+snippet ... "dots in context" iA
+\dots
+endsnippet
+
+context "math()"
+snippet n; "\eta" iA
+\eta
+endsnippet
+
+snippet x; "\xi" iA
+\xi
 endsnippet
 # vim:ft=snippets

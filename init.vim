@@ -1,8 +1,3 @@
-"    ██╗   ██╗██╗███╗   ███╗██████╗  ██████╗
-"    ██║   ██║██║████╗ ████║██╔══██╗██╔════╝
-"    ██║   ██║██║██╔████╔██║██████╔╝██║     
-"    ╚██╗ ██╔╝██║██║╚██╔╝██║██╔══██╗██║     
-" ██╗ ╚████╔╝ ██║██║ ╚═╝ ██║██║  ██║╚██████╗
 let mapleader="\<space>"
 "{{{1 Load plugins
 call plug#begin('~/.vim/plugged')
@@ -36,7 +31,6 @@ let g:coc_global_extensions = [
 autocmd CursorHold * silent call CocActionAsync('highlight')
 nnoremap <silent> gd :call CocActionAsync('jumpDefinition')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
 "no longer jump to definition
 nnoremap <silent> gr :call CocActionAsync('jumpUsed')<CR>
 nnoremap <silent>K :call <SID>show_documentation()<CR>
@@ -130,15 +124,16 @@ let g:tex_conceal_frac=1
 " }}} tex-conceal "
 " vimtex {{{ 
 Plug 'lervag/vimtex'
-let g:tex_flavor='plain'
+let g:tex_flavor='tex'
 let g:vimtex_view_method = 'zathura'
-let g:vimtex_view_automatic = 0
-let g:vimtex_quickfix_mode = 2
+let g:vimtex_view_automatic = 1
+let g:vimtex_quickfix_mode = 0
 let g:vimtex_quickfix_open_on_warning=0
 let g:vimtex_matchparen_enabled = 0
+let g:vimtex_indent_enabled=0
 nnoremap <localleader>lt :call vimtex#fzf#run()<cr>
 let g:vimtex_compiler_latexmk_engines = {
-			\ '_'         : '-xelatex --shell-escape'
+			\ '_'         : '-pdflatex --shell-escape'
 			\}
 let g:tex_stylish = 1
 let g:tex_isk='48-57,a-z,A-Z,192-255,:'
@@ -152,13 +147,12 @@ let g:vimtex_compiler_progname = 'nvr'
 " auto-save {{{ 
 Plug '907th/vim-auto-save'
 let g:auto_save = 1
-let	g:auto_save_events=["CursorHold"]
 " }}} auto-save "
 " UltiSnips {{{ 
 Plug 'sirver/ultisnips'
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+let g:UltiSnipsExpandTrigger = '<Tab>'
+let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 nnoremap <leader>es :UltiSnipsEdit!<cr>
 let g:UltiSnipsEditSplit='vertical'
 " }}} UltiSnips "
@@ -169,7 +163,7 @@ Plug 'junegunn/fzf', {
       \}
 Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
-let $FZF_DEFAULT_COMMAND="rg --files "
+let $FZF_DEFAULT_COMMAND="rg --hidden --files --glob '!.cache/**' --glob '!.local' --glob '!.fonts' --glob  '!.oh-my-zsh' --glob '!.perl5' --glob '!.vscode' --glob '!.yarn'| rg .config"
 let g:fzf_layout = {'window': {'width': 0.8, 'height': 0.75} }
 let g:fzf_colors = {
       \ 'fg':      ['fg', 'Normal'],
@@ -250,7 +244,7 @@ call plug#end()
 "}}}1
 "{{{1 UI
 colorscheme dracula
-set guifont=Firacode\ Nerd\ Font\ Mono:h15:w53
+au VimLeave * set guicursor=a:hor1 " auto cmd to restore cursor"
 set mouse=vn
 " {{{2  function Foldtext
 function! Foldtext()
@@ -290,19 +284,21 @@ endif
 
 " }}} fcitx input method "
 set foldmethod=marker
-au VimLeave * set guicursor=a:hor1 " auto cmd to restore cursor"
-autocmd FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
-autocmd BufReadPost *
+autocmd! FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
+autocmd! BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
-autocmd TermOpen * startinsert 
+autocmd! TermOpen * startinsert 
+autocmd! FileType help wincmd _
 "}}}1
 "{{{1key-binding
-cnoremap w!! execute 'silent! write !SUDO_ASKPASS=`which qt4-ssh-askpass` sudo tee % >/dev/null' <bar> edit!
+cnoremap w!! execute 'silent! write !SUDO_ASKPASS=`qt4-ssh-askpass` sudo tee % >/dev/null' <bar> edit!
 " Buffer navigation
-nnoremap <silent> gb    :bnext<cr>
-nnoremap <silent> gp    :bprevious<cr>
+nnoremap <silent> ]b    :bnext<cr>
+nnoremap <silent> [b    :bprevious<cr>
+nnoremap <silent> ]B    :blast<cr>
+nnoremap <silent> [B    :bfirst<cr>
 " Utility maps for repeatable quickly change/delete current word
 nnoremap c*   *``cgn
 nnoremap c#   *``cgN
@@ -313,34 +309,28 @@ nnoremap d#   *``dgN
 nnoremap dg* g*``dgn
 nnoremap dg# g*``dgN
 nnoremap gV  `[V`]
-nnoremap <silent> <c-s> :CocCommand explorer<CR>
+nnoremap <silent> <leader><leader> :CocCommand explorer<CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 "right now there is no need for format selected
 nnoremap ff :call CocActionAsync('format')<CR> 
 vnoremap ff <Plug>(coc-format-selected)
-nnoremap <silent> <c-f> :FZF<CR>
+nnoremap <silent> <leader>f :FZF<CR>
 nnoremap <silent>++ vip++<esc>
-"if the last window is explorer quit the window
-autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
-" remve blank in the end
 nnoremap <F1> :call UltiSnips#RefreshSnippets() <CR>
 nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
-nnoremap <silent> <leader>ev :edit $MYVIMRC <CR>
-nnoremap <silent> <leader>ez :edit ~/.zshrc <CR>
+nnoremap <silent> <leader>ev :tabedit $MYVIMRC <CR>
+nnoremap <silent> <leader>ez :tabedit ~/.zshrc <CR>
 nnoremap U <C-r>
 nnoremap Y y$
-inoremap <C-e> <C-o>$
-inoremap <C-a> <C-o>^
 nnoremap <silent> `` :on<CR>
-tnoremap <Esc> <C-\><C-n>
+nnoremap <silent> ~~ :tabonly<CR>
 nnoremap <silent> <backspace> za
 nnoremap <silent> <C-h> <C-w><C-h>
 nnoremap <silent> <C-j> <C-w><C-j>
 nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
-tnoremap <silent> <C-j> <C-\><C-n><C-w><C-j>a
-tnoremap <silent> <C-k> <C-\><C-n><C-w><C-k>a
-nnoremap <silent> <F2> <Plug>(coc-rename)
+
+nnoremap <silent> <F2> :call CocActionAsync('rename')<CR>
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 nmap ]e <Plug>(coc-diagnostic-next-error)
@@ -348,8 +338,14 @@ nmap ]a <Plug>(coc-diagnostic-next)
 nmap [e <Plug>(coc-diagnostic-prev-error)
 nmap [a <Plug>(coc-diagnostic-prev)
 nnoremap <silent> <F5> :call CompileRunGcc()<CR>
+
+inoremap <C-e> <C-o>$
+inoremap <C-a> <C-o>^
+
+tnoremap <silent> <C-j> <C-\><C-n><C-w><C-j>a
+tnoremap <Esc> <C-\><C-n>
+tnoremap <silent> <C-k> <C-\><C-n><C-w><C-k>a
 func! CompileRunGcc()
-          exec "w"
           if &filetype == 'python'
                   if search("@profile")
                           exec "AsyncRun kernprof -l -v %"
@@ -374,19 +370,22 @@ nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" 
 nnoremap <leader>rv :g/^/m0<CR>
 "}}}1
 "{{{ misc
-set confirm nowrap
+set confirm nowrap ignorecase
+set pastetoggle=<f4>
 set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf suffixes+=.old
 set hidden undolevels=100 title history=1000 timeoutlen=500
 set sidescroll=5 listchars+=precedes:<,extends:>
 set backspace=indent,eol,start backspace=2
-set updatetime=300
-set autoindent cindent copyindent
-set shortmess+=c
+set updatetime=700 number
+set cindent copyindent
 set nobackup nowritebackup noswapfile
 set tabstop=4 softtabstop=4 shiftwidth=4
-set showmatch hlsearch
+set showmatch hlsearch magic
 set clipboard=unnamedplus
 set termguicolors
-set fileencodings=utf-8 fileformat=unix
+set fileformats=unix,dos,mac fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
+set enc=utf8 helplang=en
 set noshowmode showcmd
 set linebreak conceallevel=1
+set textwidth=78
+set autochdir
