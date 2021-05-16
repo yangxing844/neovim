@@ -260,27 +260,27 @@ set fillchars=vert:│,fold:\ ,diff:⣿
 "}}}1
 "{{{1 performance
 " fcitx input method {{{
-if has('unix')
-let g:input_toggle = 0
-function! Fcitx2en()
-   let s:input_status = system("fcitx5-remote")
-   if s:input_status == 2 
-      let g:input_toggle = 1
-      let l:a = system("fcitx5-remote -c")
-   endif
-endfunction
+" if has('unix')
+" let g:input_toggle = 0
+" function! Fcitx2en()
+"    let s:input_status = system("fcitx5-remote")
+"    if s:input_status == 2 
+"       let g:input_toggle = 1
+"       let l:a = system("fcitx5-remote -c")
+"    endif
+" endfunction
 
-function! Fcitx2zh()
-   let s:input_status = system("fcitx5-remote")
-   if s:input_status != 2 && g:input_toggle == 1
-      let l:a = system("fcitx5-remote -o")
-      let g:input_toggle = 0
-   endif
-endfunction
+" function! Fcitx2zh()
+"    let s:input_status = system("fcitx5-remote")
+"    if s:input_status != 2 && g:input_toggle == 1
+"       let l:a = system("fcitx5-remote -o")
+"       let g:input_toggle = 0
+"    endif
+" endfunction
 
-autocmd InsertLeave * call Fcitx2en()
-autocmd InsertEnter * call Fcitx2zh()
-endif
+" autocmd InsertLeave * call Fcitx2en()
+" autocmd InsertEnter * call Fcitx2zh()
+" endif
 
 " }}} fcitx input method "
 set foldmethod=marker
