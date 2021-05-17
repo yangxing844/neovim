@@ -126,11 +126,12 @@ let g:tex_conceal_frac=1
 Plug 'lervag/vimtex'
 let g:tex_flavor='tex'
 let g:vimtex_view_method = 'zathura'
-let g:vimtex_view_automatic = 1
+let g:vimtex_view_automatic = 0
 let g:vimtex_quickfix_mode = 0
 let g:vimtex_quickfix_open_on_warning=0
-let g:vimtex_matchparen_enabled = 0
+" let g:vimtex_matchparen_enabled = 0
 let g:vimtex_indent_enabled=0
+let g:vimtex_imaps_leader=';'
 nnoremap <localleader>lt :call vimtex#fzf#run()<cr>
 let g:vimtex_compiler_latexmk_engines = {
 			\ '_'         : '-pdflatex --shell-escape'
