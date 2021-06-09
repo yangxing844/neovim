@@ -8,31 +8,29 @@ def env(name):
 	return x != '0' and x != '0' 
 endglobal
 
-snippet template "Basic template" b
+snippet template "Basic template with some packages commeted" b
 % !Mode:: "TeX:UTF-8"
-% !TEX program  = xelatex
-\documentclass[a4paper]{article}
+% !TEX program  = pdflatex
+\documentclass[a4paper]{amsart}
 \usepackage{textcomp}
-\usepackage{fontspec}
-%\usepackage[inlimits]{amsmath,
-%\usepackage{amssymb}
+\usepackage{amsmath,amssymb}
 \usepackage{physics}
 \usepackage{graphicx}
-% \usepackage{siunitx}
-% \usepackage{hyperref}
-% \hypersetup{
-%     colorlinks=true,
-%     linkcolor=blue,
-%     filecolor=magenta,      
-%     urlcolor=cyan,
-% }
+\usepackage{bm} %better vector support
+\usepackage{personal}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks = true,
+	linkcolor  = blue,
+	filecolor  = magenta,
+	urlcolor   = cyan,
+}
 % \usepackage{xcolor} % color for texts
 % \usepackage{caption} % no numbring
 % \usepackage{import,xifthen,pdfpages} % inkscape drawing
 % \usepackage{float} % H for located position
-% \usepackage{titlesec}
-% \titlespacing{\section}{-3pc}{1.5ex plus .1ex minus .2ex}{0pc}
-% \usepackage{tikz,personal}
+\usepackage{hyperref}
 \begin{document}
 	$0
 \end{document}
@@ -160,17 +158,13 @@ snippet sq "\sqrt{}" wA
 endsnippet
 
 context "math()"
-snippet ^ "to the ... power" iA
-^{$1}$0
+snippet ^^ "to the ... power" iA
+^{ $1 }$0
 endsnippet
 
 context "math()"
-snippet _ "subscript" iA
-_{$1}$0
-endsnippet
-
-snippet ooo "\infty" iA
-\infty $0
+snippet __ "subscript" iA
+_{ $1 }$0
 endsnippet
 
 context "math()"
@@ -241,7 +235,7 @@ endsnippet
 
 priority 200
 context "math()"
-snippet '(?<!\\)(arcsin|arccos|arctan|arccot|arccsc|arcsec|pi|zeta)' "ln" rwA
+snippet '(?<!\\)(arcsin|arccos|arctan|arccot|arccsc|arcsec|zeta)' "ln" rwA
 \\`!p snip.rv = match.group(1)`$0
 endsnippet
 
@@ -296,7 +290,7 @@ snippet "(\b)([a-zA-Z])hat" "hat" riA
 endsnippet
 
 context "math()"
-snippet rm "mathrm" iA
+snippet ;rm "mathrm" iA
 \mathrm{$1}$0
 endsnippet
 
@@ -335,9 +329,25 @@ gives you information about the selected font, how the letters are
 written and an impression of the look.
 endsnippet
 	
-
-snippet ... "dots in context" iA
-\dots
+snippet lb "inserting a label" i
+\label{$1}$0
 endsnippet
 
+snippet dr "draw of tikz" i
+\draw[$1] ($2,$3) -- ($4,$5) $0;
+endsnippet
+
+
+snippet fill "fill a place" i
+\fill[${1:red}] ($2,$3) -- ( $4,$5 ) -- ($6,$7);
+endsnippet
+
+snippet cor "coordinates in tikz" i
+\coordinate ($1) at ($2);$0
+endsnippet
+
+
+snippet intersec "intersection points in tikz" i
+\path[name intersections={of= $1 and $2}];$0
+endsnippet
 # vim:ft=snippets

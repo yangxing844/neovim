@@ -134,7 +134,7 @@ let g:vimtex_indent_enabled=0
 let g:vimtex_imaps_leader=';'
 nnoremap <localleader>lt :call vimtex#fzf#run()<cr>
 let g:vimtex_compiler_latexmk_engines = {
-			\ '_'         : '-pdflatex --shell-escape'
+			\ '_'         : '-pdflatex -shell-escape'
 			\}
 let g:tex_stylish = 1
 let g:tex_isk='48-57,a-z,A-Z,192-255,:'
@@ -164,7 +164,7 @@ Plug 'junegunn/fzf', {
       \}
 Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
-let $FZF_DEFAULT_COMMAND="rg --hidden --files --glob '!.cache/**' --glob '!.local' --glob '!.fonts' --glob  '!.oh-my-zsh' --glob '!.perl5' --glob '!.vscode' --glob '!.yarn'| rg .config"
+let $FZF_DEFAULT_COMMAND="rg --files"
 let g:fzf_layout = {'window': {'width': 0.8, 'height': 0.75} }
 let g:fzf_colors = {
       \ 'fg':      ['fg', 'Normal'],
@@ -261,27 +261,27 @@ set fillchars=vert:│,fold:\ ,diff:⣿
 "}}}1
 "{{{1 performance
 " fcitx input method {{{
-" if has('unix')
-" let g:input_toggle = 0
-" function! Fcitx2en()
-"    let s:input_status = system("fcitx5-remote")
-"    if s:input_status == 2 
-"       let g:input_toggle = 1
-"       let l:a = system("fcitx5-remote -c")
-"    endif
-" endfunction
+if has('unix')
+let g:input_toggle = 0
+function! Fcitx2en()
+   let s:input_status = system("fcitx5-remote")
+   if s:input_status == 2 
+      let g:input_toggle = 1
+      let l:a = system("fcitx5-remote -c")
+   endif
+endfunction
 
-" function! Fcitx2zh()
-"    let s:input_status = system("fcitx5-remote")
-"    if s:input_status != 2 && g:input_toggle == 1
-"       let l:a = system("fcitx5-remote -o")
-"       let g:input_toggle = 0
-"    endif
-" endfunction
+function! Fcitx2zh()
+   let s:input_status = system("fcitx5-remote")
+   if s:input_status != 2 && g:input_toggle == 1
+      let l:a = system("fcitx5-remote -o")
+      let g:input_toggle = 0
+   endif
+endfunction
 
-" autocmd InsertLeave * call Fcitx2en()
-" autocmd InsertEnter * call Fcitx2zh()
-" endif
+autocmd InsertLeave * call Fcitx2en()
+autocmd InsertEnter * call Fcitx2zh()
+endif
 
 " }}} fcitx input method "
 set foldmethod=marker
@@ -331,13 +331,13 @@ nnoremap <silent> <C-j> <C-w><C-j>
 nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
 
-nnoremap <silent> <F2> :call CocActionAsync('rename')<CR>
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 nmap ]e <Plug>(coc-diagnostic-next-error)
 nmap ]a <Plug>(coc-diagnostic-next)
 nmap [e <Plug>(coc-diagnostic-prev-error)
 nmap [a <Plug>(coc-diagnostic-prev)
+nmap <leader>rn <Plug>(coc-rename)
 nnoremap <silent> <F5> :call CompileRunGcc()<CR>
 
 inoremap <C-e> <C-o>$
@@ -369,6 +369,12 @@ inoremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" 
 nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
 " reverse by line number
 nnoremap <leader>rv :g/^/m0<CR>
+if exists(":Tabularize")
+      nmap <Leader>a= :Tabularize /=<CR>
+      vmap <Leader>a= :Tabularize /=<CR>
+      nmap <Leader>a: :Tabularize /:\zs<CR>
+      vmap <Leader>a: :Tabularize /:\zs<CR>
+endif
 "}}}1
 "{{{ misc
 set confirm nowrap ignorecase
@@ -388,5 +394,4 @@ set fileformats=unix,dos,mac fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp93
 set enc=utf8 helplang=en
 set noshowmode showcmd
 set linebreak conceallevel=1
-set textwidth=78
 set autochdir
