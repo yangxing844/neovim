@@ -61,7 +61,6 @@ Plug 'tpope/vim-commentary'
 " python-syntax-highlight {{{ "
 Plug 'vim-python/python-syntax'
 Plug 'numirias/semshi'
-Plug 'chrisbra/Colorizer'
 let g:semshi#always_update_all_highlights=1 "solve foramt color losing"
 let g:semshi#excluded_hl_groups=['local','builtin']
 let g:semshi#mark_selected_nodes=0
@@ -241,6 +240,9 @@ let g:cpp_class_decl_highlight = 1
 " java-Script {{{ "
 Plug 'pangloss/vim-javascript'
 " }}} java-Script "
+" Colorizer {{{ "
+Plug 'chrisbra/Colorizer'
+" }}} Colorizer "
 call plug#end()
 "}}}1
 "{{{1 UI
@@ -261,23 +263,23 @@ set fillchars=vert:│,fold:\ ,diff:⣿
 "}}}1
 "{{{1 performance
 " fcitx input method {{{
-if has('unix')
-let g:input_toggle = 0
-function! Fcitx2en()
-   let s:input_status = system("fcitx5-remote")
-   if s:input_status == 2 
-      let g:input_toggle = 1
-      let l:a = system("fcitx5-remote -c")
-   endif
-endfunction
+" if has('unix')
+" let g:input_toggle = 0
+" function! Fcitx2en()
+"    let s:input_status = system("fcitx5-remote")
+"    if s:input_status == 2 
+"       let g:input_toggle = 1
+"       let l:a = system("fcitx5-remote -c")
+"    endif
+" endfunction
 
-function! Fcitx2zh()
-   let s:input_status = system("fcitx5-remote")
-   if s:input_status != 2 && g:input_toggle == 1
-      let l:a = system("fcitx5-remote -o")
-      let g:input_toggle = 0
-   endif
-endfunction
+" function! Fcitx2zh()
+"    let s:input_status = system("fcitx5-remote")
+"    if s:input_status != 2 && g:input_toggle == 1
+"       let l:a = system("fcitx5-remote -o")
+"       let g:input_toggle = 0
+"    endif
+" endfunction
 
 autocmd InsertLeave * call Fcitx2en()
 autocmd InsertEnter * call Fcitx2zh()
@@ -389,6 +391,7 @@ set nobackup nowritebackup noswapfile
 set tabstop=4 softtabstop=4 shiftwidth=4
 set showmatch hlsearch magic
 set clipboard=unnamedplus
+set iskeyword-=_
 set termguicolors
 set fileformats=unix,dos,mac fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
 set enc=utf8 helplang=en
