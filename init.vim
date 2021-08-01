@@ -5,10 +5,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'dracula/vim', { 'as': 'dracula' }
 let g:dracula_underline = 0
 " }}} dracula "
-" vim-snippets {{{ "
-Plug 'honza/vim-snippets'
-
-" }}} vim-snippets "
 "{{{2   Coc Plugin
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 inoremap <silent><expr> <c-j>
