@@ -1,3 +1,3 @@
+setlocal makeprg=asy\ %
+setlocal errorformat=%f:\ %l.%c:\ %m
 let b:AutoPairs =  {'(':')', '[':']', '{':'}','"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''",'$':'$'} |
-let b:loaded_matchparen=1
-setlocal shiftwidth=2

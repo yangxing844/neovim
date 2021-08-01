@@ -292,6 +292,7 @@ autocmd! BufReadPost *
      \ endif
 autocmd! TermOpen * startinsert 
 autocmd! FileType help wincmd _
+au BufRead,BufNewFile *.asy		set filetype=asy
 "}}}1
 "{{{1key-binding
 cnoremap w!! execute 'silent! write !SUDO_ASKPASS=`qt4-ssh-askpass` sudo tee % >/dev/null' <bar> edit!
@@ -344,11 +345,11 @@ vnoremap K :m '<-2<CR>gv=gv
 
 
 nnoremap <silent> ~~ :tabonly<CR>
-nnoremap <silent> <backspace> za
-nnoremap <silent> <C-h> <C-w><C-h>
 nnoremap <silent> <C-j> <C-w><C-j>
 nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
+nnoremap <silent> <backspace> za
+nnoremap <silent> <C-h> <C-w><C-h>
 
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
@@ -389,10 +390,10 @@ nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" 
 " reverse by line number
 nnoremap <leader>rv :g/^/m0<CR>
 if exists(":Tabularize")
-      nmap <Leader>a= :Tabularize /=<CR>
-      vmap <Leader>a= :Tabularize /=<CR>
-      nmap <Leader>a: :Tabularize /:\zs<CR>
-      vmap <Leader>a: :Tabularize /:\zs<CR>
+      nmap <leader>a= :Tabularize /=<CR>
+      vmap <leader>a= :Tabularize /=<CR>
+      nmap <leader>a: :Tabularize /:\zs<CR>
+      vmap <leader>a: :Tabularize /:\zs<CR>
 endif
 "}}}1
 "{{{ misc
@@ -415,3 +416,7 @@ set enc=utf8 helplang=en
 set noshowmode showcmd
 set linebreak conceallevel=1
 set autochdir
+set path+=/usr/share/asymptote
+set suffixesadd+=.asy
+set binary noeol
+set textwidth=80
