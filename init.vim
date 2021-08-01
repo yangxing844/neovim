@@ -123,12 +123,10 @@ let g:tex_conceal_frac=1
 " }}} tex-conceal "
 " vimtex {{{ 
 Plug 'lervag/vimtex'
-let g:tex_flavor='tex'
+let g:tex_flavor='latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_view_automatic = 0
 let g:vimtex_quickfix_mode = 0
-let g:vimtex_quickfix_open_on_warning=0
-" let g:vimtex_matchparen_enabled = 0
 let g:vimtex_indent_enabled=0
 let g:vimtex_imaps_leader=';'
 nnoremap <localleader>lt :call vimtex#fzf#run()<cr>
@@ -281,9 +279,9 @@ set fillchars=vert:│,fold:\ ,diff:⣿
 "    endif
 " endfunction
 
-autocmd InsertLeave * call Fcitx2en()
-autocmd InsertEnter * call Fcitx2zh()
-endif
+" autocmd InsertLeave * call Fcitx2en()
+" autocmd InsertEnter * call Fcitx2zh()
+" endif
 
 " }}} fcitx input method "
 set foldmethod=marker
@@ -324,8 +322,27 @@ nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
 nnoremap <silent> <leader>ev :tabedit $MYVIMRC <CR>
 nnoremap <silent> <leader>ez :tabedit ~/.zshrc <CR>
 nnoremap U <C-r>
+
 nnoremap Y y$
-nnoremap <silent> `` :on<CR>
+" keep the next and previous centered
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap J mzJ'
+" undo break points
+inoremap , ,<c-g>u
+inoremap . .<c-g>u
+inoremap ? ?<c-g>u
+inoremap ! !<c-g>u
+" make count jump a tag
+nnoremap <expr> k (v:count > 5? "m'"  . v:count :"") . 'k'
+nnoremap <expr> j (v:count > 5? "m'"  . v:count :"") . 'j'
+
+"moving text in group with J and K
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+
+
 nnoremap <silent> ~~ :tabonly<CR>
 nnoremap <silent> <backspace> za
 nnoremap <silent> <C-h> <C-w><C-h>
