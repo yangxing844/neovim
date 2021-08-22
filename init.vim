@@ -416,3 +416,14 @@ set path+=/usr/share/asymptote
 set suffixesadd+=.asy
 set binary noeol
 set textwidth=80
+set smartcase
+set noro
+"}}}
+" highlight  {{{ "
+
+hi Search guibg=NONE
+hi Search guifg=yellow
+hi Normal guibg=#212529
+hi NonText guibg=#312539
+hi NonText guifg=#312539
+" }}} highlight  "
