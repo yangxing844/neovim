@@ -1,0 +1,25 @@
+snippet temp "template for drawing" b
+settings.outformat="pdf";
+settings.prc=false;
+settings.render=0;
+usepackage("amsmath");
+usepackage("stix2");
+import three;
+import graph;
+import math;
+size(10cm,0);
+
+//axes and origin of cartesian coordinates system.
+label("$O$",O,align=-X-Y-Z,Billboard);
+draw(O -- 1.1X,arrow=Arrow3(),L=Label("$x$",position=EndPoint,align=X));
+draw(O -- 1.1Y,arrow=Arrow3(),L=Label("$y$",position=EndPoint,align=Y));
+draw(O -- 1.1Z,arrow=Arrow3(),L=Label("$z$",position=EndPoint,align=Z));
+endsnippet
+
+
+snippet for "for loop" b
+for (int $2=0;$2<$1;++$2)
+{
+	$0
+}
+endsnippet

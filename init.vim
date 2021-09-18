@@ -79,10 +79,10 @@ let g:lightline = {
       \ 'colorscheme': 'dracula',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly','cocstatus', 'filename', 'modified'] ]
+      \             [ 'gitbranch', 'readonly','cocstatus', 'filename', 'modified',] ]
       \ },
       \ 'component_function': {
-      \   'gitbranch': 'GitStatus',
+      \   'gitbranch': 'FugitiveHead',
 	  \	  'readonly':  'LightlineReadonly',
 	  \   'cocstatus': 'coc#status'
 	  \},
@@ -103,20 +103,10 @@ let g:lightline = {
 function! LightlineReadonly()
 	return &readonly ? '' : ''
 endfunction
-function! GitStatus()
-	let [a,m,r] = GitGutterGetHunkSummary()
-	return printf('+%d ~%d -%d', a, m, r)
-endfunction
 "}}}
 " asyncrun {{{ 
 Plug 'skywind3000/asyncrun.vim'
 " }}} asyncrun "
-" tex-conceal {{{ 
-Plug 'KeitaNakamura/tex-conceal.vim',{'for':'tex'}
-let g:tex_conceal="abdgm"
-let g:tex_conceal_frac=1
-
-" }}} tex-conceal "
 " vimtex {{{ 
 Plug 'lervag/vimtex'
 let g:tex_flavor='latex'
@@ -134,6 +124,8 @@ let g:tex_isk='48-57,a-z,A-Z,192-255,:'
 let g:vimtex_fold_enabled = 1
 let g:vimtex_fold_types = {
       \ 'markers' : {'enabled': 1},
+      \ 'comments' : {'enabled': 1},
+      \ 'cmd_multi' : {'enabled': 1},
 	  \ 'sections' : {'parse_levels': 1}
       \}
 let g:vimtex_compiler_progname = 'nvr'
@@ -210,7 +202,7 @@ nnoremap <silent> <leader>oo       :call fzf#run(fzf#wrap({
 " }}} fzf "
 " auto-pairs {{{ "
 Plug 'jiangmiao/auto-pairs'
-let g:AutoPairs={'(':')', '[':']', '{':'}',"'":"'",'"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''"}
+let g:AutoPairs={'{':'}',"'":"'",'"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''"}
 " }}} "
 " vim-matchup {{{ "
 Plug 'andymass/vim-matchup'
@@ -280,7 +272,6 @@ set fillchars=vert:│,fold:\ ,diff:⣿
 " endif
 
 " }}} fcitx input method "
-set foldmethod=marker
 autocmd! FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
 autocmd! BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -291,7 +282,7 @@ autocmd! FileType help wincmd _
 au BufRead,BufNewFile *.asy		set filetype=asy
 "}}}1
 "{{{1key-binding
-cnoremap w!! execute 'silent! write !SUDO_ASKPASS=`qt4-ssh-askpass` sudo tee % >/dev/null' <bar> edit!
+command Fw :execute 'w !sudo tee >/dev/null %:p:S' | setl nomod
 " Buffer navigation
 nnoremap <silent> ]b    :bnext<cr>
 nnoremap <silent> [b    :bprevious<cr>
@@ -313,7 +304,6 @@ nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap ff :call CocActionAsync('format')<CR> 
 vnoremap ff <Plug>(coc-format-selected)
 nnoremap <silent> <leader>f :FZF<CR>
-nnoremap <silent>++ vip++<esc>
 nnoremap <F1> :call UltiSnips#RefreshSnippets() <CR>
 nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
 nnoremap <silent> <leader>ev :tabedit $MYVIMRC <CR>
@@ -331,16 +321,14 @@ inoremap . .<c-g>u
 inoremap ? ?<c-g>u
 inoremap ! !<c-g>u
 " make count jump a tag
-nnoremap <expr> k (v:count > 5? "m'"  . v:count :"") . 'k'
-nnoremap <expr> j (v:count > 5? "m'"  . v:count :"") . 'j'
+" nnoremap <expr> k (v:count > 5? "m'"  . v:count :"") . 'k'
+" nnoremap <expr> j (v:count > 5? "m'"  . v:count :"") . 'j'
 
 "moving text in group with J and K
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
-
-
-nnoremap <silent> ~~ :tabonly<CR>
+"disable scrollwhell
 nnoremap <silent> <C-j> <C-w><C-j>
 nnoremap <silent> <C-k> <C-w><C-k>
 nnoremap <silent> <C-l> <C-w><C-l>
@@ -349,12 +337,26 @@ nnoremap <silent> <C-h> <C-w><C-h>
 
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+"visual select and search string
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+
+
 nmap ]e <Plug>(coc-diagnostic-next-error)
 nmap ]a <Plug>(coc-diagnostic-next)
 nmap [e <Plug>(coc-diagnostic-prev-error)
 nmap [a <Plug>(coc-diagnostic-prev)
 nmap <leader>rn <Plug>(coc-rename)
-nnoremap <silent> <F5> :call CompileRunGcc()<CR>
+
+nnoremap <silent> <F3> :AutoSaveToggle<CR>
 
 inoremap <C-e> <C-o>$
 inoremap <C-a> <C-o>^
@@ -362,6 +364,7 @@ inoremap <C-a> <C-o>^
 tnoremap <silent> <C-j> <C-\><C-n><C-w><C-j>a
 tnoremap <Esc> <C-\><C-n>
 tnoremap <silent> <C-k> <C-\><C-n><C-w><C-k>a
+nnoremap <silent> <F5> :call CompileRunGcc()<CR>
 func! CompileRunGcc()
           if &filetype == 'python'
                   if search("@profile")
@@ -374,22 +377,20 @@ func! CompileRunGcc()
                           exec "AsyncRun -mode=term -rows=5 -raw -focus=0 python3 %"
 				  endif
           endif
-		  if &filetype == 'cpp' || &filetype == 'c'
-			  exec "AsyncRun -mode=term -rows=5 -raw g++ -Wall -O2 -g  $(VIM_FILEPATH)  && ./a.out"
+		  if &filetype == 'cpp' || &filetype == 'c' 
+			  exec "AsyncRun -mode=term -rows=5 -raw -focus=0 make -s -C build run"
 		  endif
 		  if &filetype == 'sh'
 			  exec "AsyncRun -mode=term -rows=5 -raw %"
 		  endif
 endfunc
-inoremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "'.b:vimtex.root.'/figures/"'<CR><CR>:w<CR>
-nnoremap fig : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
 " reverse by line number
 nnoremap <leader>rv :g/^/m0<CR>
 if exists(":Tabularize")
-      nmap <leader>a= :Tabularize /=<CR>
-      vmap <leader>a= :Tabularize /=<CR>
-      nmap <leader>a: :Tabularize /:\zs<CR>
-      vmap <leader>a: :Tabularize /:\zs<CR>
+      nnoremap <leader>a = :Tabularize / = <CR>
+      nnoremap <leader>a = :Tabularize / = <CR>
+      nnoremap <leader>a: :Tabularize /:\zs<CR>
+      nnoremap <leader>a: :Tabularize /:\zs<CR>
 endif
 "}}}1
 "{{{ misc
@@ -397,33 +398,62 @@ set confirm nowrap ignorecase
 set pastetoggle=<f4>
 set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf suffixes+=.old
 set hidden undolevels=100 title history=1000 timeoutlen=500
-set sidescroll=5 listchars+=precedes:<,extends:>
+set listchars+=precedes:<,extends:>
 set backspace=indent,eol,start backspace=2
 set updatetime=700 number
 set cindent copyindent
 set nobackup nowritebackup noswapfile
 set tabstop=4 softtabstop=4 shiftwidth=4
 set showmatch hlsearch magic
-set clipboard=unnamedplus
-set iskeyword-=_
+set autochdir
+set clipboard+=unnamedplus
 set termguicolors
 set fileformats=unix,dos,mac fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
 set enc=utf8 helplang=en
 set noshowmode showcmd
-set linebreak conceallevel=1
-set autochdir
+set linebreak
 set path+=/usr/share/asymptote
 set suffixesadd+=.asy
 set binary noeol
 set textwidth=80
 set smartcase
 set noro
+set scrolloff=5
+
+
+" temp undo in vim
+
+let s:undodir="/tmp/.undodir_".$USER
+if !isdirectory(s:undodir)
+	call mkdir(s:undodir,"",0700)
+endif
+
+let &undodir=s:undodir
+set undofile
+
+"no binart increase for numbers 
+set nrformats=
 "}}}
 " highlight  {{{ "
 
 hi Search guibg=NONE
 hi Search guifg=yellow
-hi Normal guibg=#212529
-hi NonText guibg=#312539
-hi NonText guifg=#312539
+hi NonText guibg=#212529
+hi NonText guifg=#212529
 " }}} highlight  "
+call vimtex#imaps#add_map({
+      \ 'lhs' : 'i',
+      \ 'rhs' : '\im',
+	  \ 'wrapper' : 'vimtex#imaps#wrap_trivial',
+      \ 'leader': ';'
+      \})
+call vimtex#imaps#add_map({
+      \ 'lhs' : 'H',
+	  \ 'rhs' : '\mathcal{H}',
+	  \ 'wrapper' : 'vimtex#imaps#wrap_trivial',
+      \ 'leader': ';'
+      \})
+if $TERM=~ "alacritty" "{{{
+  execute "set t_8f=\e[38;2;%lu;%lu;%lum"
+  execute "set t_8b=\e[48;2;%lu;%lu;%lum"
+endif""}}} 

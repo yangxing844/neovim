@@ -3,6 +3,10 @@
 	"suggest.timeout": 1000,
 	"suggest.removeDuplicateItems": true,
 	"suggest.enablePreview": true,
+	"suggest.floatConfig": {
+		"border": true,
+		"winblend": 70
+	},
 	"suggest.minTriggerInputLength": 3,
 	"diagnostic.showUnused": false,
 	//python
@@ -18,7 +22,7 @@
 	// explorer
 	"explorer.width": 30,
 	"explorer.icon.enableNerdfont": true,
-	"explorer.icon.source":"vim-devicons",
+	"explorer.icon.source": "vim-devicons",
 	"explorer.previewAction.onHover": false,
 	"explorer.file.child.template": "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5]",
 	"explorer.keyMappings.global": {
@@ -68,7 +72,7 @@
 			],
 			"initializationOptions": {
 				"cache": {
-					"directory": ".ccls-cache"
+					"directory": "/home/yangxing/.cache/.ccls-cache"
 				},
 				"client": {
 					"snippetSupport": true
