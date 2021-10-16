@@ -72,6 +72,8 @@ Plug 'plasticboy/vim-markdown'
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_conceal_code_blocks = 1
+
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 " }}} vim-markdown "
 " statusline {{{ 
 Plug 'itchyny/lightline.vim'
@@ -113,11 +115,12 @@ let g:tex_flavor='latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_view_automatic = 0
 let g:vimtex_quickfix_mode = 0
+let g:vimtex_matchparen_enabled=0
 let g:vimtex_indent_enabled=0
 let g:vimtex_imaps_leader=';'
 nnoremap <localleader>lt :call vimtex#fzf#run()<cr>
 let g:vimtex_compiler_latexmk_engines = {
-			\ '_'         : '-pdflatex -shell-escape'
+			\ '_'         : '-pdflatex --shell-escape'
 			\}
 let g:tex_stylish = 1
 let g:tex_isk='48-57,a-z,A-Z,192-255,:'
@@ -202,14 +205,15 @@ nnoremap <silent> <leader>oo       :call fzf#run(fzf#wrap({
 " }}} fzf "
 " auto-pairs {{{ "
 Plug 'jiangmiao/auto-pairs'
-let g:AutoPairs={'{':'}',"'":"'",'"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''"}
+" let g:AutoPairs={'{':'}',"'":"'",'"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''"}
 " }}} "
-" vim-matchup {{{ "
+" " vim-matchup {{{ "
 Plug 'andymass/vim-matchup'
 let g:matchup_matchparen_offscreen = {'method': 'popup'}
 let g:matchup_override_vimtex = 1
 let g:matchup_matchparen_deferred = 1 " perf issue"
-" }}} vim-matchup "
+let g:matchup_matchparen_deferred_show_delay = 150
+" " }}} vim-matchup "
 " vim-surround {{{ "
 Plug 'tpope/vim-surround'
 " }}} vim-surround "
@@ -229,6 +233,10 @@ Plug 'pangloss/vim-javascript'
 " Colorizer {{{ "
 Plug 'chrisbra/Colorizer'
 " }}} Colorizer "
+
+" kmonad {{{ "
+Plug 'https://github.com/kmonad/kmonad-vim.git'
+" }}} kmonad "
 call plug#end()
 "}}}1
 "{{{1 UI
