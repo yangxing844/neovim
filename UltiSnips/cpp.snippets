@@ -22,7 +22,7 @@ def mapchar(string):
     return string_return
 endglobal
 snippet main "Ahhh the int main" b
-int main(int args, **args[])
+int main(int argc, char *argv[])
 {
 	${1:${VISUAL}}
 }
@@ -46,7 +46,6 @@ endsnippet
 
 snippet inc "include dirctory" b
 #include <$1
-$0
 endsnippet
 
 snippet incl "include local" b

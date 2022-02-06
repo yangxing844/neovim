@@ -1,4 +1,4 @@
-snippet temp "template for drawing" b
+snippet temp3 "template for drawing 3D figures" b
 settings.outformat="pdf";
 settings.prc=false;
 settings.render=0;
@@ -22,4 +22,27 @@ for (int $2=0;$2<$1;++$2)
 {
 	$0
 }
+endsnippet
+
+
+snippet temp2 "template for drawing 2D figures" b
+settings.outformat="pdf";
+usepackage("amsmath");
+usepackage("stix2");
+import graph;
+import math;
+size(10cm,0);
+
+//axes and origin of cartesian coordinates system.
+pair o = (0,0);
+pair x = (1,0);
+pair y = (0,1);
+//draw some help lines
+for (int i=0;i<10;++i)
+{
+	draw( (i,0) -- (i,10), dashed+gray(0.8));
+	draw( (0,i) -- (10,i), dashed+gray(0.8));
+}
+draw(Label("$x$",Relative(1)),(-1,0)--x,Arrow());
+draw(Label("$y$",Relative(1)),(0,-10)--y,Arrow());
 endsnippet

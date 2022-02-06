@@ -68,13 +68,16 @@ snippet => "implies" Ai
 \implies
 endsnippet
 
+# snippet mk "inline math" wA
+# $${1}$`!p
+# if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
+# 	snip.rv = ' '
+# else:
+# 	snip.rv = ''
+# `$2
+# endsnippet
 snippet mk "inline math" wA
-$${1}$`!p
-if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
-	snip.rv = ' '
-else:
-	snip.rv = ''
-`$2
+$$1$$0
 endsnippet
 
 snippet dm "displayed math" bA
@@ -99,7 +102,7 @@ snippet / "Fraction" i
 endsnippet
 
 context "math()"
-snippet '((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/' "symbol frac" wrA
+snippet '([a-zA-Z\^_\d\\]+)/' "symbol frac" wrA
 \frac{`!p snip.rv = match.group(1)`}{$1}$0
 endsnippet
 
@@ -120,28 +123,28 @@ snip.rv = stripped[0:i] + "\\frac{" + stripped[i+1:-1] + "}"
 endsnippet
 
 context "math()"
-snippet '(\w|\}|\))_((?!(\{|\}|\d))(?:[a-zA-z0-9\s\\\{\}\-\+]+)?)' "auto subscript" r
-`!p snip.rv = match.group(1)`_{`!p snip.rv = match.group(2)`$1}$0
+snippet '([a-zA-Z]|\})\.([0-9a-zA-Z])' "auto subscript" rA
+`!p snip.rv = match.group(1)`_`!p snip.rv = match.group(2)`
 endsnippet
 
 context "math()"
-snippet '(\w|\}|\))\^((?!(\{|\}|\d))(?:[a-zA-z0-9\s\\\{\}\-\+]+)?)' "auto superscript" r
-`!p snip.rv = match.group(1)`^{`!p snip.rv = match.group(2)`$1}$0
+snippet '([a-zA-Z]|\})([0-9])' "auto superscript" rA
+`!p snip.rv = match.group(1)`^`!p snip.rv = match.group(2)`
 endsnippet
 
-# context "math()"
-# snippet  ^^ "to the ... power" iA
-# ^{${1:${VISUAL}}}$0
-# endsnippet
+context "math()"
+snippet  fd "to the ... power" iA
+_{${1:${VISUAL}}}$0
+endsnippet
 
-# context "math()"
-# snippet __ "subscript" iA
-# _{${1:${VISUAL}}}$0
-# endsnippet
+context "math()"
+snippet jk "subscript" iA
+^{${1:${VISUAL}}}$0
+endsnippet
 
 context "math()"
 snippet == "equals" iA
-&= $1 
+&=  
 endsnippet
 
 context "math()"
@@ -162,7 +165,7 @@ endsnippet
 
 context "math()"
 snippet sq "\sqrt{}" wA
-\sqrt{${1:${VISUAL}}} $0
+\sqrt{${1:${VISUAL}}}$0
 endsnippet
 
 
@@ -229,12 +232,12 @@ endsnippet
 
 context "math()"
 snippet '(\|)([\s\S]+)>' "ket operator" wr
-\ket*{`!p snip.rv = match.group(2)`}
+\ket{`!p snip.rv = match.group(2)`}
 endsnippet
 
 context "math()"
 snippet '<([\s\S]+)(\|)' "bra operator" wr
-\bra*{`!p snip.rv = match.group(1)`}
+\bra{`!p snip.rv = match.group(1)`}
 endsnippet
 
 priority 100
@@ -243,6 +246,10 @@ snippet '<([\s\S]+)(\|)([\s\S]+)>' "bra operator" wr
 \braket{`!p snip.rv = match.group(1)`}{`!p snip.rv = match.group(3)`}
 endsnippet
 
+context "math()" 
+snippet '\|([\s\S]+)\|' "absolute operator" wr
+\abs{`!p snip.rv=match.group(1)`}
+endsnippet
 priority 200
 context "math()"
 snippet '<([\s\S]+)(\|)([\s\S]+)(\|)([\s\S]+)>' "bra operator" wr
@@ -290,6 +297,7 @@ pre_expand "create_table(snip)"
 snippet "gentbl(\d+)x(\d+)" "Generate table of *width* by *height*" r
 endsnippet
 
+priority 1000
 pre_expand "add_row(snip)"
 snippet "tr(\d+)" "Add table row of dimension ..." r
 endsnippet
@@ -490,8 +498,8 @@ snippet tb "text bold" w
 \textbf{${1:${VISUAL}}} $0
 endsnippet
 
-snippet ti "text italic" w
-\textit{${1:${VISUAL}}} $0
+snippet em "text emphasis" w
+\emph{${1:${VISUAL}}} $0
 endsnippet
 
 context "math()"
@@ -501,7 +509,7 @@ endsnippet
 
 context "math()" 
 snippet tt "text in math mode" w
-\text{$1} $0
+\text{$1}$0
 endsnippet
 
 # vim:ft=snippets

@@ -23,6 +23,7 @@ if exists(':GuiScrollBar')
     GuiScrollBar 0
 endif
 
-
+set guifont=FiraCode\ Nerd\ Font\ Mono:h16,Noto\ Sans\ CJK:h16
+let g:neovide_input_use_logo=v:true
 let g:neovide_transparency=0.95
-let g:neovide_cursor_animation_length=0.1
+let g:neovide_cursor_animation_length=0

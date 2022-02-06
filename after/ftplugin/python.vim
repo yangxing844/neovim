@@ -18,3 +18,5 @@ endfunction
 call MycustonHighlight()
 setlocal foldmethod=indent
 setlocal foldlevel=99
+
+set isk-=_

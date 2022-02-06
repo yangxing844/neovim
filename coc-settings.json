@@ -4,8 +4,7 @@
 	"suggest.removeDuplicateItems": true,
 	"suggest.enablePreview": true,
 	"suggest.floatConfig": {
-		"border": true,
-		"winblend": 70
+		"border": true
 	},
 	"suggest.minTriggerInputLength": 3,
 	"diagnostic.showUnused": false,
@@ -20,7 +19,7 @@
 		"--extend-ignore errors=E51,E4"
 	],
 	// explorer
-	"explorer.width": 30,
+	"explorer.width": 40,
 	"explorer.icon.enableNerdfont": true,
 	"explorer.icon.source": "vim-devicons",
 	"explorer.previewAction.onHover": false,
@@ -41,9 +40,7 @@
 			"pyc",
 			"aux",
 			"fls",
-			"log",
 			"fdb_latexmk",
-			"gz",
 			"xdv"
 		],
 		"filenames": [],
@@ -68,17 +65,18 @@
 				"compile_commands.json",
 				".git",
 				".vim",
-				".clang-format"
+				".clang-format",
+				"CMakeLists.txt"
 			],
 			"initializationOptions": {
 				"cache": {
-					"directory": "/home/yangxing/.cache/.ccls-cache"
+					"directory": "/home/yangxing/.ccls-cache"
 				},
 				"client": {
 					"snippetSupport": true
 				},
 				"index": {
-					"onChange": false,
+					"onChange": true,
 					"initialBlacklist": [
 						"english"
 					]

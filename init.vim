@@ -124,7 +124,7 @@ let g:vimtex_compiler_latexmk_engines = {
 			\}
 let g:tex_stylish = 1
 let g:tex_isk='48-57,a-z,A-Z,192-255,:'
-let g:vimtex_fold_enabled = 1
+" let g:vimtex_fold_enabled = 1
 let g:vimtex_fold_types = {
       \ 'markers' : {'enabled': 1},
       \ 'comments' : {'enabled': 1},
@@ -144,6 +144,7 @@ let g:UltiSnipsJumpForwardTrigger = '<Tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 nnoremap <leader>es :UltiSnipsEdit!<cr>
 let g:UltiSnipsEditSplit='vertical'
+let g:snips_author='yangxing'
 " }}} UltiSnips "
 " fzf {{{ 
 Plug 'junegunn/fzf', {
@@ -217,9 +218,9 @@ let g:matchup_matchparen_deferred_show_delay = 150
 " vim-surround {{{ "
 Plug 'tpope/vim-surround'
 " }}} vim-surround "
-" vim-git {{{ "
-Plug 'tpope/vim-fugitive'
-" }}} vim-git "
+" " vim-git {{{ "
+" Plug 'tpope/vim-fugitive'
+" " }}} vim-git "
 " c++ highlight {{{ "
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 " c++ syntax highlighting
@@ -233,10 +234,12 @@ Plug 'pangloss/vim-javascript'
 " Colorizer {{{ "
 Plug 'chrisbra/Colorizer'
 " }}} Colorizer "
-
 " kmonad {{{ "
 Plug 'https://github.com/kmonad/kmonad-vim.git'
 " }}} kmonad "
+" veiw register {{{ "
+Plug 'junegunn/vim-peekaboo'
+" }}} veiw register "
 call plug#end()
 "}}}1
 "{{{1 UI
@@ -285,7 +288,9 @@ autocmd! BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
-autocmd! TermOpen * startinsert 
+if has("nvim")
+	autocmd! TermOpen * startinsert 
+endif
 autocmd! FileType help wincmd _
 au BufRead,BufNewFile *.asy		set filetype=asy
 "}}}1
@@ -329,8 +334,6 @@ inoremap . .<c-g>u
 inoremap ? ?<c-g>u
 inoremap ! !<c-g>u
 " make count jump a tag
-" nnoremap <expr> k (v:count > 5? "m'"  . v:count :"") . 'k'
-" nnoremap <expr> j (v:count > 5? "m'"  . v:count :"") . 'j'
 
 "moving text in group with J and K
 vnoremap J :m '>+1<CR>gv=gv
@@ -387,6 +390,7 @@ func! CompileRunGcc()
           endif
 		  if &filetype == 'cpp' || &filetype == 'c' 
 			  exec "AsyncRun -mode=term -rows=5 -raw -focus=0 make -s -C build run"
+			  " exec "AsyncRun -mode=term -rows=5 -raw -focus=0 make run"
 		  endif
 		  if &filetype == 'sh'
 			  exec "AsyncRun -mode=term -rows=5 -raw %"
@@ -413,7 +417,7 @@ set cindent copyindent
 set nobackup nowritebackup noswapfile
 set tabstop=4 softtabstop=4 shiftwidth=4
 set showmatch hlsearch magic
-set autochdir
+" set autochdir
 set clipboard+=unnamedplus
 set termguicolors
 set fileformats=unix,dos,mac fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
@@ -423,14 +427,15 @@ set linebreak
 set path+=/usr/share/asymptote
 set suffixesadd+=.asy
 set binary noeol
-set textwidth=80
+set textwidth=120
 set smartcase
 set noro
 set scrolloff=5
 
+"fold comments 
+" set foldmethod=expr foldexpr=getline(v:lnum)=~'^\\s*'.&commentstring[0]
 
-" temp undo in vim
-
+" undodir in tmpfs
 let s:undodir="/tmp/.undodir_".$USER
 if !isdirectory(s:undodir)
 	call mkdir(s:undodir,"",0700)
@@ -441,6 +446,9 @@ set undofile
 
 "no binart increase for numbers 
 set nrformats=
+"set python 3.10 path
+let g:python3_host_prog = '/usr/bin/python'
+
 "}}}
 " highlight  {{{ "
 
