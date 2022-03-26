@@ -88,19 +88,6 @@ let g:lightline = {
 	  \	  'readonly':  'LightlineReadonly',
 	  \   'cocstatus': 'coc#status'
 	  \},
-		\ 'mode_map': {
-        \ 'n' : 'N',
-        \ 'i' : 'I',
-        \ 'R' : 'R',
-        \ 'v' : 'V',
-        \ 'V' : 'VL',
-        \ "\<C-v>": 'VB',
-        \ 'c' : 'C',
-        \ 's' : 'S',
-        \ 'S' : 'SL',
-        \ "\<C-s>": 'SB',
-        \ 't': 'T',
-        \ },
       \ }
 function! LightlineReadonly()
 	return &readonly ? '' : ''
@@ -124,18 +111,11 @@ let g:vimtex_compiler_latexmk_engines = {
 			\}
 let g:tex_stylish = 1
 let g:tex_isk='48-57,a-z,A-Z,192-255,:'
-" let g:vimtex_fold_enabled = 1
-let g:vimtex_fold_types = {
-      \ 'markers' : {'enabled': 1},
-      \ 'comments' : {'enabled': 1},
-      \ 'cmd_multi' : {'enabled': 1},
-	  \ 'sections' : {'parse_levels': 1}
-      \}
-let g:vimtex_compiler_progname = 'nvr'
+let g:vimtex_fold_enabled = 1
 " }}} vimtex "
 " auto-save {{{ 
 Plug '907th/vim-auto-save'
-let g:auto_save = 1
+let g:auto_save = 0
 " }}} auto-save "
 " UltiSnips {{{ 
 Plug 'sirver/ultisnips'
@@ -376,6 +356,32 @@ tnoremap <silent> <C-j> <C-\><C-n><C-w><C-j>a
 tnoremap <Esc> <C-\><C-n>
 tnoremap <silent> <C-k> <C-\><C-n><C-w><C-k>a
 nnoremap <silent> <F5> :call CompileRunGcc()<CR>
+lua << EOF
+local normal_compile = "g++ % && ./a.out"
+local make_compile = "make run"
+local cmake_compile = "cmake build && make -C build run -s"
+local cwd = vim.fn.expand("%:h")
+
+local function file_exists(name)
+	local f = io.open(name,'r')
+	if f~=nil
+		then io.close(f)
+		return true
+	else
+		return false
+	end
+end
+
+function _G.run_command()
+	if file_exists(cwd.."/Makefile") then
+		return make_compile
+	elseif file_exists(cwd.."/CMakeLists.txt") then
+		return cmake_compile
+	else
+		return normal_compile
+	end
+end
+EOF
 func! CompileRunGcc()
           if &filetype == 'python'
                   if search("@profile")
@@ -389,8 +395,7 @@ func! CompileRunGcc()
 				  endif
           endif
 		  if &filetype == 'cpp' || &filetype == 'c' 
-			  exec "AsyncRun -mode=term -rows=5 -raw -focus=0 make -s -C build run"
-			  " exec "AsyncRun -mode=term -rows=5 -raw -focus=0 make run"
+			  exec "AsyncRun -mode=term -rows=5 -raw -focus=0 " . v:lua.run_command()
 		  endif
 		  if &filetype == 'sh'
 			  exec "AsyncRun -mode=term -rows=5 -raw %"
@@ -427,7 +432,8 @@ set linebreak
 set path+=/usr/share/asymptote
 set suffixesadd+=.asy
 set binary noeol
-set textwidth=120
+set textwidth=78
+set cc=+1
 set smartcase
 set noro
 set scrolloff=5
@@ -448,28 +454,15 @@ set undofile
 set nrformats=
 "set python 3.10 path
 let g:python3_host_prog = '/usr/bin/python'
+set conceallevel=1
 
 "}}}
 " highlight  {{{ "
-
 hi Search guibg=NONE
 hi Search guifg=yellow
 hi NonText guibg=#212529
 hi NonText guifg=#212529
 " }}} highlight  "
-call vimtex#imaps#add_map({
-      \ 'lhs' : 'i',
-      \ 'rhs' : '\im',
-	  \ 'wrapper' : 'vimtex#imaps#wrap_trivial',
-      \ 'leader': ';'
-      \})
-call vimtex#imaps#add_map({
-      \ 'lhs' : 'H',
-	  \ 'rhs' : '\mathcal{H}',
-	  \ 'wrapper' : 'vimtex#imaps#wrap_trivial',
-      \ 'leader': ';'
-      \})
-if $TERM=~ "alacritty" "{{{
-  execute "set t_8f=\e[38;2;%lu;%lu;%lum"
-  execute "set t_8b=\e[48;2;%lu;%lu;%lum"
-endif""}}} 
+" lua test {{{ "
+lua require('compile_lua')
+" }}} lua test "
