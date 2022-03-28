@@ -5,44 +5,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'dracula/vim', { 'as': 'dracula' }
 let g:dracula_underline = 0
 " }}} dracula "
-"{{{2   Coc Plugin
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-inoremap <silent><expr> <c-j>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<c-j>" :
-      \ coc#refresh()
-inoremap <expr><c-k> pumvisible() ? "\<C-p>" : "\<c-k>"
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
-endif
-let g:coc_global_extensions = [
-  \ 'coc-eslint',
-  \ ]
-autocmd CursorHold * silent call CocActionAsync('highlight')
-nnoremap <silent> gd :call CocActionAsync('jumpDefinition')<CR>
-nmap <silent> gy <Plug>(coc-type-definition)
-"no longer jump to definition
-nnoremap <silent> gr :call CocActionAsync('jumpUsed')<CR>
-nnoremap <silent>K :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if index(['vim', 'help'], &filetype) >= 0
-    execute 'help ' . expand('<cword>')
-  elseif &filetype ==# 'neomuttrc'
-    let l:cword = expand('<cword>')
-    Man neomuttrc
-    call search(l:cword)
-  elseif &filetype ==# 'tex'
-    VimtexDocPackage
-  else
-    call CocAction('doHover')
-  endif
-endfunction
+"{{{2   language server protocol
+Plug 'neovim/nvim-lspconfig'
 "}}}2
 " vim-devicons {{{ "
 Plug 'ryanoasis/vim-devicons'
@@ -57,7 +21,7 @@ Plug 'tpope/vim-commentary'
 " python-syntax-highlight {{{ "
 Plug 'vim-python/python-syntax'
 Plug 'numirias/semshi'
-let g:semshi#always_update_all_highlights=1 "solve foramt color losing"
+let g:semshi#always_update_all_highlights=1 "solve format color losing"
 let g:semshi#excluded_hl_groups=['local','builtin']
 let g:semshi#mark_selected_nodes=0
 let g:semshi#no_default_builtin_highlight=0
@@ -201,13 +165,6 @@ Plug 'tpope/vim-surround'
 " " vim-git {{{ "
 " Plug 'tpope/vim-fugitive'
 " " }}} vim-git "
-" c++ highlight {{{ "
-Plug 'jackguo380/vim-lsp-cxx-highlight'
-" c++ syntax highlighting
-let g:cpp_class_scope_highlight = 1
-let g:cpp_member_variable_highlight = 1
-let g:cpp_class_decl_highlight = 1
-" }}} c++ highlight "
 " java-Script {{{ "
 Plug 'pangloss/vim-javascript'
 " }}} java-Script "
@@ -276,38 +233,13 @@ au BufRead,BufNewFile *.asy		set filetype=asy
 "}}}1
 "{{{1key-binding
 command Fw :execute 'w !sudo tee >/dev/null %:p:S' | setl nomod
-" Buffer navigation
-nnoremap <silent> ]b    :bnext<cr>
-nnoremap <silent> [b    :bprevious<cr>
-nnoremap <silent> ]B    :blast<cr>
-nnoremap <silent> [B    :bfirst<cr>
-" Utility maps for repeatable quickly change/delete current word
-nnoremap c*   *``cgn
-nnoremap c#   *``cgN
-nnoremap cg* g*``cgn
-nnoremap cg# g*``cgN
-nnoremap d*   *``dgn
-nnoremap d#   *``dgN
-nnoremap dg* g*``dgn
-nnoremap dg# g*``dgN
-nnoremap gV  `[V`]
 nnoremap <silent> <leader><leader> :CocCommand explorer<CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 "right now there is no need for format selected
-nnoremap ff :call CocActionAsync('format')<CR> 
-vnoremap ff <Plug>(coc-format-selected)
 nnoremap <silent> <leader>f :FZF<CR>
-nnoremap <F1> :call UltiSnips#RefreshSnippets() <CR>
-nnoremap <silent> <leader>xv :source $MYVIMRC <CR>
-nnoremap <silent> <leader>ev :tabedit $MYVIMRC <CR>
-nnoremap <silent> <leader>ez :tabedit ~/.zshrc <CR>
-nnoremap U <C-r>
 
-nnoremap Y y$
-" keep the next and previous centered
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap J mzJ'
+nnoremap <F1> :call UltiSnips#RefreshSnippets() <CR>
+
 " undo break points
 inoremap , ,<c-g>u
 inoremap . .<c-g>u
@@ -320,11 +252,6 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 "disable scrollwhell
-nnoremap <silent> <C-j> <C-w><C-j>
-nnoremap <silent> <C-k> <C-w><C-k>
-nnoremap <silent> <C-l> <C-w><C-l>
-nnoremap <silent> <backspace> za
-nnoremap <silent> <C-h> <C-w><C-h>
 
 nnoremap <silent><nowait><expr> <C-n> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-p> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
@@ -349,12 +276,10 @@ nmap <leader>rn <Plug>(coc-rename)
 
 nnoremap <silent> <F3> :AutoSaveToggle<CR>
 
-inoremap <C-e> <C-o>$
-inoremap <C-a> <C-o>^
-
 tnoremap <silent> <C-j> <C-\><C-n><C-w><C-j>a
 tnoremap <Esc> <C-\><C-n>
 tnoremap <silent> <C-k> <C-\><C-n><C-w><C-k>a
+
 nnoremap <silent> <F5> :call CompileRunGcc()<CR>
 lua << EOF
 local normal_compile = "g++ % && ./a.out"
@@ -411,32 +336,6 @@ if exists(":Tabularize")
 endif
 "}}}1
 "{{{ misc
-set confirm nowrap ignorecase
-set pastetoggle=<f4>
-set wildignore=.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf suffixes+=.old
-set hidden undolevels=100 title history=1000 timeoutlen=500
-set listchars+=precedes:<,extends:>
-set backspace=indent,eol,start backspace=2
-set updatetime=700 number
-set cindent copyindent
-set nobackup nowritebackup noswapfile
-set tabstop=4 softtabstop=4 shiftwidth=4
-set showmatch hlsearch magic
-" set autochdir
-set clipboard+=unnamedplus
-set termguicolors
-set fileformats=unix,dos,mac fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
-set enc=utf8 helplang=en
-set noshowmode showcmd
-set linebreak
-set path+=/usr/share/asymptote
-set suffixesadd+=.asy
-set binary noeol
-set textwidth=78
-set cc=+1
-set smartcase
-set noro
-set scrolloff=5
 
 "fold comments 
 " set foldmethod=expr foldexpr=getline(v:lnum)=~'^\\s*'.&commentstring[0]
@@ -450,11 +349,10 @@ endif
 let &undodir=s:undodir
 set undofile
 
-"no binart increase for numbers 
+"no binary increase for numbers 
 set nrformats=
 "set python 3.10 path
 let g:python3_host_prog = '/usr/bin/python'
-set conceallevel=1
 
 "}}}
 " highlight  {{{ "
@@ -465,4 +363,7 @@ hi NonText guifg=#212529
 " }}} highlight  "
 " lua test {{{ "
 lua require('compile_lua')
+lua require('key-binding')
+lua require('settings')
+lua require('lsp-config')
 " }}} lua test "
