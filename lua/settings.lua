@@ -1,5 +1,5 @@
 vim.o.confirm=true
-vim.o.wrap=false
+vim.o.wrap=true
 vim.o.ignorecase=true
 vim.o.pastetoggle='<f4>'
 vim.o.wildignore = '.git,*.o,*.a,*.jpg,*.png,*.gif,*.pdf'
@@ -39,12 +39,13 @@ vim.opt.path:append("/usr/share/asymptote")
 vim.opt.suffixesadd:append(".asy")
 vim.o.binary=true
 vim.o.eol=false
-vim.o.textwidth=78
+vim.o.textwidth=120
 vim.opt.cc:append('1')
 vim.o.smartcase=true
 vim.o.readonly=false
 vim.o.scrolloff=5
 vim.o.conceallevel=1
-vim.o.colorcolumn='78'
+vim.o.colorcolumn='120'
+vim.o.undofile=true
 
 -- move undodir to tempfs

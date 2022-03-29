@@ -316,5 +316,21 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+-- vimtex setup
+vim.g.tex_flavor='latex'
+vim.g.vimtex_view_automatic=0
+vim.g.vimtex_quickfix_mode=1
+vim.g.vimtex_imaps_leader=';'
+vim.g.vimtex_fold_enabled=1
+
+-- undofir in tmpfs
+local undodir = "/tmp/.undodir_" .. os.getenv("USER")
+if not (os.rename(undodir,undodir)) then
+	os.execute("mkdir " .. undodir)
+end
+vim.o.undodir=undodir
+
 require('settings')
+require('key-binding')
 -- vim: ts=2 sts=2 sw=2 et

@@ -25,7 +25,7 @@ vim.api.nvim_set_keymap('n','U','<c-r>',{noremap=true,silent=true})
 vim.api.nvim_set_keymap('n','n','nzzzv',{noremap=true,silent=true})
 vim.api.nvim_set_keymap('n','N','Nzzzv',{noremap=true,silent=true})
 vim.api.nvim_set_keymap('n','J','mzJ\'',{noremap=true,silent=true})
--- backspace to fold 
+-- backspace to fold
 vim.api.nvim_set_keymap('n','<backspace>','za',{noremap=true,silent=true})
 -- windows navigation
 vim.api.nvim_set_keymap('n','<C-j>','<C-w><C-j>',{noremap=true,silent=true})
