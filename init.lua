@@ -23,6 +23,7 @@ require("packer").startup(function(use)
 	use("saadparwaiz1/cmp_luasnip")
 	use("L3MON4D3/LuaSnip") -- Snippets plugin
 	use("tpope/vim-surround") -- vim surround
+	use("jose-elias-alvarez/null-ls.nvim")
 	use("lervag/vimtex")
 	use("dracula/vim")
 	use({
@@ -35,7 +36,6 @@ require("packer").startup(function(use)
 		end,
 	})
 	use("windwp/nvim-autopairs")
-	use("rafamadriz/friendly-snippets")
 end)
 
 --Set highlight on search
@@ -106,11 +106,11 @@ vim.g.indent_blankline_filetype_exclude = { "help", "packer" }
 vim.g.indent_blankline_buftype_exclude = { "terminal", "nofile" }
 vim.g.indent_blankline_show_trailing_blankline_indent = false
 
-require("indent_blankline").setup {
-    space_char_blankline = " ",
-    show_current_context = true,
-    show_current_context_start = true,
-}
+require("indent_blankline").setup({
+	space_char_blankline = " ",
+	show_current_context = true,
+	show_current_context_start = true,
+})
 -- Gitsigns
 require("gitsigns").setup({
 	signs = {
@@ -145,8 +145,8 @@ require("nvim-tree").setup({
 		side = "left",
 		preserve_window_proportions = true,
 	},
-	filters={
-	  dotfiles=true,
+	filters = {
+		dotfiles = true,
 	},
 })
 --Add leader shortcuts
@@ -282,6 +282,7 @@ local on_attach = function(_, bufnr)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+	vim.api.nvim_buf_set_keymap(bufnr, "n", "ff", "<cmd>lua vim.lsp.buf.formatting_sync()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(
 		bufnr,
 		"n",
@@ -289,7 +290,6 @@ local on_attach = function(_, bufnr)
 		[[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]],
 		opts
 	)
-	vim.cmd([[ command! Format execute 'lua vim.lsp.buf.formatting()' ]])
 end
 
 -- nvim-cmp supports additional completion capabilities
@@ -334,22 +334,35 @@ lspconfig.sumneko_lua.setup({
 			telemetry = {
 				enable = false,
 			},
+			misc = {
+				parameters = "preview",
+			},
+			format = {
+				enable = true,
+			},
 		},
 	},
 })
 
 -- luasnip setup
 local luasnip = require("luasnip")
-require("luasnip.loaders.from_vscode").lazy_load()
-require("luasnip.loaders.from_snipmate").lazy_load()
+require("luasnip").config.set_config {
+    history = true,
+    enable_autosnippets = true,
+    updateevents = "TextChanged,TextChangedP,TextChangedI",
+    -- region_check_events = "CursorMoved,CursorHold,InsertEnter",
+    region_check_events = "CursorMoved,CursorMovedI,InsertEnter",
+    -- delete_check_events = "TextChangedI,TextChangedP,TextChanged",
+    delete_check_events = "InsertLeave,InsertEnter",
+    -- treesitter-hl has 100, use something higher (default is 200).
+    ext_base_prio = 300,
+    -- minimal increase in priority.
+    ext_prio_increase = 1,
+    store_selection_keys = "<tab>",
+  }
 -- nvim-cmp setup
 local cmp = require("cmp")
 cmp.setup({
-	snippet = {
-		expand = function(args)
-			luasnip.lsp_expand(args.body)
-		end,
-	},
 	mapping = {
 		["<C-p>"] = cmp.mapping.select_prev_item(),
 		["<C-n>"] = cmp.mapping.select_next_item(),
@@ -376,12 +389,15 @@ cmp.setup({
 			end
 		end,
 	},
+})
+-- null-ls setup
+require("null-ls").setup({
 	sources = {
-		{ name = "nvim_lsp" },
-		{ name = "luasnip" },
+		require("null-ls").builtins.formatting.stylua,
+		require("null-ls").builtins.diagnostics.eslint,
+		require("null-ls").builtins.completion.spell,
 	},
 })
-
 -- vimtex setup
 vim.g.tex_flavor = "latex"
 vim.g.vimtex_view_automatic = 0
@@ -399,8 +415,12 @@ vim.o.undodir = undodir
 -- change cursor shape back
 vim.cmd([[ 
 au VimLeave * set guicursor=a:hor1
+autocmd! FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
+autocmd! BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
 ]])
 require("settings")
 require("key-binding")
-require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/snippets"})
--- vim: ts=2 sts=2 sw=2 et
+require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })

@@ -89,11 +89,6 @@ _G.packer_plugins = {
     path = "/home/yangxing/.local/share/nvim/site/pack/packer/start/cmp_luasnip",
     url = "https://github.com/saadparwaiz1/cmp_luasnip"
   },
-  ["friendly-snippets"] = {
-    loaded = true,
-    path = "/home/yangxing/.local/share/nvim/site/pack/packer/start/friendly-snippets",
-    url = "https://github.com/rafamadriz/friendly-snippets"
-  },
   ["gitsigns.nvim"] = {
     loaded = true,
     path = "/home/yangxing/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
@@ -159,6 +154,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/yangxing/.local/share/nvim/site/pack/packer/start/plenary.nvim",
     url = "https://github.com/nvim-lua/plenary.nvim"
+  },
+  ["stylua-nvim"] = {
+    loaded = true,
+    path = "/home/yangxing/.local/share/nvim/site/pack/packer/start/stylua-nvim",
+    url = "https://github.com/ckipp01/stylua-nvim"
   },
   ["telescope-fzf-native.nvim"] = {
     loaded = true,
