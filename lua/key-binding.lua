@@ -40,8 +40,8 @@ vim.api.nvim_set_keymap('n','<C-h>','<C-w><C-h>',{noremap=true,silent=true})
 --  imaps  --
 -------------
 
-vim.api.nvim_set_keymap('i','<C-e>','<C-o>$',{noremap=true,silent=true})
-vim.api.nvim_set_keymap('i','<C-a>','<C-o>^',{noremap=true,silent=true})
+-- vim.api.nvim_set_keymap('i','<C-e>','<C-o>$',{noremap=true,silent=true})
+-- vim.api.nvim_set_keymap('i','<C-a>','<C-o>^',{noremap=true,silent=true})
 
 
 -------------
