@@ -101,15 +101,15 @@ vim.cmd([[
 ]])
 
 --Map blankline
--- vim.g.indent_blankline_char = "|"
-vim.g.indent_blankline_filetype_exclude = { "help", "packer" }
-vim.g.indent_blankline_buftype_exclude = { "terminal", "nofile" }
-vim.g.indent_blankline_show_trailing_blankline_indent = false
 
 require("indent_blankline").setup({
 	space_char_blankline = " ",
 	show_current_context = true,
-	show_current_context_start = true,
+	filetype_exclude = { "help", "packer" },
+	buftype_exclude = { "terminal", "nofile" },
+	show_trailing_blankline_indent = false,
+	use_treesitter = true,
+	show_first_indent_level = false,
 })
 -- Gitsigns
 require("gitsigns").setup({
@@ -144,7 +144,15 @@ require("nvim-tree").setup({
 		height = 30,
 		side = "left",
 		preserve_window_proportions = true,
+		mappings = {
+			list = {
+				{ key = { "<2-RightMouse>", "<C-]>" }, action = "cd" },
+				{ key = { "<CR>", "o", "<2-LeftMouse>", "l" }, action = "edit" },
+				{ key = { "-", "h" }, action = "dir_up" },
+			},
+		},
 	},
+
 	filters = {
 		dotfiles = true,
 	},
@@ -297,7 +305,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
 -- Enable the following language servers
-local servers = { "clangd", "rust_analyzer", "pyright", "tsserver" }
+local servers = { "ccls", "rust_analyzer", "pyright", "tsserver" }
 for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup({
 		on_attach = on_attach,
@@ -346,20 +354,20 @@ lspconfig.sumneko_lua.setup({
 
 -- luasnip setup
 local luasnip = require("luasnip")
-require("luasnip").config.set_config {
-    history = true,
-    enable_autosnippets = true,
-    updateevents = "TextChanged,TextChangedP,TextChangedI",
-    -- region_check_events = "CursorMoved,CursorHold,InsertEnter",
-    region_check_events = "CursorMoved,CursorMovedI,InsertEnter",
-    -- delete_check_events = "TextChangedI,TextChangedP,TextChanged",
-    delete_check_events = "InsertLeave,InsertEnter",
-    -- treesitter-hl has 100, use something higher (default is 200).
-    ext_base_prio = 300,
-    -- minimal increase in priority.
-    ext_prio_increase = 1,
-    store_selection_keys = "<tab>",
-  }
+require("luasnip").config.set_config({
+	history = false,
+	enable_autosnippets = true,
+	updateevents = "TextChanged,TextChangedP,TextChangedI",
+	-- region_check_events = "CursorMoved,CursorHold,InsertEnter",
+	region_check_events = "CursorMoved,CursorMovedI,InsertEnter",
+	-- delete_check_events = "TextChangedI,TextChangedP,TextChanged",
+	delete_check_events = "InsertLeave,InsertEnter",
+	-- treesitter-hl has 100, use something higher (default is 200).
+	ext_base_prio = 300,
+	-- minimal increase in priority.
+	ext_prio_increase = 1,
+	store_selection_keys = "<tab>",
+})
 -- nvim-cmp setup
 local cmp = require("cmp")
 cmp.setup({
@@ -374,20 +382,21 @@ cmp.setup({
 			behavior = cmp.ConfirmBehavior.Replace,
 			select = true,
 		}),
-		["<Tab>"] = function(fallback)
+		["<Tab>"] = cmp.mapping(function(fallback)
 			if luasnip.expand_or_jumpable() then
 				luasnip.expand_or_jump()
 			else
 				fallback()
 			end
-		end,
-		["<S-Tab>"] = function(fallback)
+		end, { "i", "s" }),
+
+		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if luasnip.jumpable(-1) then
 				luasnip.jump(-1)
 			else
 				fallback()
 			end
-		end,
+		end, { "i", "s" }),
 	},
 })
 -- null-ls setup

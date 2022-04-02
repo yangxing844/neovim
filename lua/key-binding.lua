@@ -28,10 +28,6 @@ vim.api.nvim_set_keymap('n','J','mzJ\'',{noremap=true,silent=true})
 -- backspace to fold
 vim.api.nvim_set_keymap('n','<backspace>','za',{noremap=true,silent=true})
 -- windows navigation
-vim.api.nvim_set_keymap('n','<C-j>','<C-w><C-j>',{noremap=true,silent=true})
-vim.api.nvim_set_keymap('n','<C-k>','<C-w><C-k>',{noremap=true,silent=true})
-vim.api.nvim_set_keymap('n','<C-l>','<C-w><C-l>',{noremap=true,silent=true})
-vim.api.nvim_set_keymap('n','<C-h>','<C-w><C-h>',{noremap=true,silent=true})
 
 
 
@@ -40,8 +36,6 @@ vim.api.nvim_set_keymap('n','<C-h>','<C-w><C-h>',{noremap=true,silent=true})
 --  imaps  --
 -------------
 
--- vim.api.nvim_set_keymap('i','<C-e>','<C-o>$',{noremap=true,silent=true})
--- vim.api.nvim_set_keymap('i','<C-a>','<C-o>^',{noremap=true,silent=true})
 
 
 -------------
@@ -50,3 +44,4 @@ vim.api.nvim_set_keymap('n','<C-h>','<C-w><C-h>',{noremap=true,silent=true})
 vim.api.nvim_set_keymap('t','<C-j>','<C-\\><C-n><C-w><C-j>a',{noremap=true,silent=true})
 vim.api.nvim_set_keymap('t','<Esc>','<C-\\><C-n>',{noremap=true,silent=true})
 vim.api.nvim_set_keymap('t','<C-k>','<C-\\><C-n><C-w><C-k>a',{noremap=true,silent=true})
+
