@@ -25,7 +25,6 @@ require("packer").startup(function(use)
 	use("tpope/vim-surround") -- vim surround
 	use("jose-elias-alvarez/null-ls.nvim")
 	use("lervag/vimtex")
-	use("dracula/vim")
 	use({
 		"kyazdani42/nvim-tree.lua",
 		requires = {
@@ -120,6 +119,35 @@ require("gitsigns").setup({
 		topdelete = { text = "‾" },
 		changedelete = { text = "~" },
 	},
+	on_attach = function(bufnr)
+		local function map(mode, lhs, rhs, opts)
+			opts = vim.tbl_extend("force", { noremap = true, silent = true }, opts or {})
+			vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
+		end
+
+		-- Navigation
+		map("n", "]c", "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", { expr = true })
+		map("n", "[c", "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", { expr = true })
+
+		-- Actions
+		map("n", "<leader>hs", ":Gitsigns stage_hunk<CR>")
+		map("v", "<leader>hs", ":Gitsigns stage_hunk<CR>")
+		map("n", "<leader>hr", ":Gitsigns reset_hunk<CR>")
+		map("v", "<leader>hr", ":Gitsigns reset_hunk<CR>")
+		map("n", "<leader>hS", "<cmd>Gitsigns stage_buffer<CR>")
+		map("n", "<leader>hu", "<cmd>Gitsigns undo_stage_hunk<CR>")
+		map("n", "<leader>hR", "<cmd>Gitsigns reset_buffer<CR>")
+		map("n", "<leader>hp", "<cmd>Gitsigns preview_hunk<CR>")
+		map("n", "<leader>hb", '<cmd>lua require"gitsigns".blame_line{full=true}<CR>')
+		map("n", "<leader>tb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
+		map("n", "<leader>hd", "<cmd>Gitsigns diffthis<CR>")
+		map("n", "<leader>hD", '<cmd>lua require"gitsigns".diffthis("~")<CR>')
+		map("n", "<leader>td", "<cmd>Gitsigns toggle_deleted<CR>")
+
+		-- Text object
+		map("o", "ih", ":<C-U>Gitsigns select_hunk<CR>")
+		map("x", "ih", ":<C-U>Gitsigns select_hunk<CR>")
+	end,
 })
 
 -- Telescope
@@ -158,7 +186,6 @@ require("nvim-tree").setup({
 	},
 })
 --Add leader shortcuts
--- vim.api.nvim_set_keymap('n', '<leader><space>', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader><space>", [[<cmd>NvimTreeToggle<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap(
 	"n",
@@ -276,7 +303,7 @@ local on_attach = function(_, bufnr)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+	-- vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(
@@ -304,8 +331,24 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
+lspconfig.ccls.setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+	init_options = {
+		index = {
+			threads = 6,
+		},
+		cache = {
+			directory = "/home/yangxing/.ccls-cache",
+		},
+		clang = {
+			excludeArgs = { "-frounding-math" },
+		},
+	},
+})
+
 -- Enable the following language servers
-local servers = { "ccls", "rust_analyzer", "pyright", "tsserver" }
+local servers = { "rust_analyzer", "pyright", "tsserver" }
 for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup({
 		on_attach = on_attach,
@@ -355,7 +398,7 @@ lspconfig.sumneko_lua.setup({
 -- luasnip setup
 local luasnip = require("luasnip")
 require("luasnip").config.set_config({
-	history = false,
+	history = true,
 	enable_autosnippets = true,
 	updateevents = "TextChanged,TextChangedP,TextChangedI",
 	-- region_check_events = "CursorMoved,CursorHold,InsertEnter",
@@ -370,6 +413,7 @@ require("luasnip").config.set_config({
 })
 -- nvim-cmp setup
 local cmp = require("cmp")
+
 cmp.setup({
 	mapping = {
 		["<C-p>"] = cmp.mapping.select_prev_item(),
@@ -397,20 +441,41 @@ cmp.setup({
 				fallback()
 			end
 		end, { "i", "s" }),
+
+		["<C-j>"] = cmp.mapping(function(fallback)
+			if luasnip.choice_active() then
+				luasnip.change_choice(1)
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<C-k>"] = cmp.mapping(function(fallback)
+			if luasnip.choice_active() then
+				luasnip.change_choice(-1)
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
 	},
+	sources = cmp.config.sources({
+		{ name = "luasnip" }, -- For luasnip users.
+	}, {
+		{ name = "buffer" },
+	}),
 })
 -- null-ls setup
 require("null-ls").setup({
 	sources = {
 		require("null-ls").builtins.formatting.stylua,
 		require("null-ls").builtins.diagnostics.eslint,
-		require("null-ls").builtins.completion.spell,
+		-- require("null-ls").builtins.completion.spell,
 	},
 })
+
 -- vimtex setup
 vim.g.tex_flavor = "latex"
 vim.g.vimtex_view_automatic = 0
-vim.g.vimtex_quickfix_mode = 1
+vim.g.vimtex_quickfix_mode = 0
 vim.g.vimtex_imaps_leader = ";"
 vim.g.vimtex_fold_enabled = 1
 

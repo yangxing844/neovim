@@ -1,16 +1,14 @@
 local ls = require("luasnip")
 local s = ls.s
-local sn = ls.sn
-local t = ls.t
-local i = ls.i
-local f = ls.f
--- local c = ls.c
--- local d = ls.d
+local sn = ls.sn -- snippet node
+local t = ls.t -- text_node
+local i = ls.i -- insert_node
+local c = ls.c -- choice_node
+local d = ls.d
 -- local pi = ls.parent_indexer
--- local isn = require("luasnip.nodes.snippet").ISN
+local isn = require("luasnip.nodes.snippet").ISN
 -- local psn = require("luasnip.nodes.snippet").PSN
 -- local l = require("luasnip.extras").l
--- local r = require("luasnip.extras").rep
 local p = require("luasnip.extras").partial
 -- local types = require("luasnip.util.types")
 -- local events = require("luasnip.util.events")
@@ -24,36 +22,40 @@ return {
 	s({ trig = "snip", name = "snip for luasnip", decr = "expand to a snippet template" }, {
 		t('s({ trig="'),
 		i(1, "trigger"),
-		t('" }, t{'),
+		t('" }, { t('),
 		i(2, "node"),
-		t("})"),
-		i(0),
+		t(") }"),
+		c(3,{ t(""),t(",{ condition = tex.in_text}"), t(",{ condition = tex.in_mathzone}") }),
+		t(")")
 	}),
 
-	s(
-		{ trig = "b(%d)(%w+)", regTrig = true },
-		f(function(_, snip)
-			return "Captured Text: " .. snip.captures[1] .. snip.captures[2] .. "."
-		end, {})
-	),
-
-	s("line", {
-		i(1, "text_of_first"),
-		i(2, { "first_line_of_second", "second_line_of_second" }),
-		-- order is 2,1, not 1,2!!
-		f(function(args, _)
-			return args[1][1]
-			--here
-		end, { 2, 1 }),
+	s("isn2", {
+		isn(1, t({ "//This is", "A multiline", "comment" }), "$PARENT_INDENT//"),
 	}),
 
-	s("trigger", {
-		i(1, "First jump"),
-		t(" :: "),
-		sn(2, {
-			i(1, "Second jump"),
-			t(" : "),
-			i(2, "Third jump"),
+	s("trig", {
+		t("text: "),
+		i(1),
+		t({ "", "copy: " }),
+		d(2, function(args)
+			-- the returned snippetNode doesn't need a position; it's inserted
+			-- "inside" the dynamicNode.
+			return sn(nil, {
+				-- jump-indices are local to each snippetNode, so restart at 1.
+				i(1, args[1]),
+			})
+		end, { 1 }),
+	}),
+
+	s("paren_change", {
+		c(1, {
+			sn(nil, { t("("), r(1, "user_text"), t(")") }),
+			sn(nil, { t("["), r(1, "user_text"), t("]") }),
+			sn(nil, { t("{"), r(1, "user_text"), t("}") }),
 		}),
+	}, {
+		stored = {
+			user_text = i(1, "default_text"),
+		},
 	}),
 }

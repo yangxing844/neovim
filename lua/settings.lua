@@ -37,6 +37,7 @@ vim.o.showcmd=true
 vim.o.linebreak=true
 vim.opt.path:append("/usr/share/asymptote")
 vim.opt.suffixesadd:append(".asy")
+vim.opt.isk:remove("_")
 vim.o.binary=true
 vim.o.eol=false
 vim.o.textwidth=120
@@ -47,5 +48,5 @@ vim.o.scrolloff=5
 vim.o.conceallevel=1
 vim.o.colorcolumn='120'
 vim.o.undofile=true
+vim.opt.autochdir=true
 
--- move undodir to tempfs

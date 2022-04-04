@@ -27,6 +27,7 @@ vim.api.nvim_set_keymap('n','N','Nzzzv',{noremap=true,silent=true})
 vim.api.nvim_set_keymap('n','J','mzJ\'',{noremap=true,silent=true})
 -- backspace to fold
 vim.api.nvim_set_keymap('n','<backspace>','za',{noremap=true,silent=true})
+vim.api.nvim_set_keymap('n','<leader>es','<cmd>lua require("luasnip.loaders.from_lua").edit_snippet_files()<CR>',{noremap=true,silent=true})
 -- windows navigation
 
 
