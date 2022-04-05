@@ -7,7 +7,7 @@ require("packer").startup(function(use)
 	-- UI to select things (files, grep results, open buffers...)
 	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
-	use("mjlbach/onedark.nvim") -- Theme inspired by Atom
+	use("navarasu/onedark.nvim") -- Theme inspired by Atom
 	use("nvim-lualine/lualine.nvim") -- Fancier statusline
 	-- Add indentation guides even on blank lines
 	use("lukas-reineke/indent-blankline.nvim")
@@ -17,6 +17,17 @@ require("packer").startup(function(use)
 	use("nvim-treesitter/nvim-treesitter")
 	-- Additional textobjects for treesitter
 	use("nvim-treesitter/nvim-treesitter-textobjects")
+	use({
+		"folke/todo-comments.nvim",
+		requires = "nvim-lua/plenary.nvim",
+		config = function()
+			require("todo-comments").setup({
+				-- your configuration comes here
+				-- or leave it empty to use the default settings
+				-- refer to the configuration section below
+			})
+		end,
+	})
 	use("neovim/nvim-lspconfig") -- Collection of configurations for built-in LSP client
 	use("hrsh7th/nvim-cmp") -- Autocompletion plugin
 	use("hrsh7th/cmp-nvim-lsp")
@@ -62,8 +73,7 @@ vim.wo.signcolumn = "yes"
 
 --Set colorscheme
 vim.o.termguicolors = true
-vim.cmd([[colorscheme onedark]])
-
+require("onedark").load()
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = "menuone,noselect"
 
@@ -236,8 +246,6 @@ vim.api.nvim_set_keymap(
 	{ noremap = true, silent = true }
 )
 
--- Treesitter configuration
--- Parsers must be installed manually via :TSInstall
 require("nvim-treesitter.configs").setup({
 	highlight = {
 		enable = true, -- false will disable the whole extension
@@ -374,6 +382,7 @@ lspconfig.sumneko_lua.setup({
 				path = runtime_path,
 			},
 			diagnostics = {
+				enable = false,
 				-- Get the language server to recognize the `vim` global
 				globals = { "vim" },
 			},
@@ -397,6 +406,7 @@ lspconfig.sumneko_lua.setup({
 
 -- luasnip setup
 local luasnip = require("luasnip")
+local types = require("luasnip.util.types")
 require("luasnip").config.set_config({
 	history = true,
 	enable_autosnippets = true,
@@ -409,12 +419,33 @@ require("luasnip").config.set_config({
 	ext_base_prio = 300,
 	-- minimal increase in priority.
 	ext_prio_increase = 1,
+	ext_opts = {
+		[types.choiceNode] = {
+			active = {
+				virt_text = { { "●", "MoreMsg" } },
+			},
+		},
+		[types.insertNode] = {
+			active = {
+				virt_text = { { "●", "ModeMsg" } },
+			},
+		},
+	},
 	store_selection_keys = "<tab>",
 })
 -- nvim-cmp setup
 local cmp = require("cmp")
 
 cmp.setup({
+	snippet = {
+		-- REQUIRED - you must specify a snippet engine
+		expand = function(args)
+			-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+			require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
+			-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+			-- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+		end,
+	},
 	mapping = {
 		["<C-p>"] = cmp.mapping.select_prev_item(),
 		["<C-n>"] = cmp.mapping.select_next_item(),
@@ -459,8 +490,10 @@ cmp.setup({
 	},
 	sources = cmp.config.sources({
 		{ name = "luasnip" }, -- For luasnip users.
+		{ name = "nvim_lsp" },
 	}, {
 		{ name = "buffer" },
+		{ name = "path" },
 	}),
 })
 -- null-ls setup
