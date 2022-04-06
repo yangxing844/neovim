@@ -31,6 +31,7 @@ require("packer").startup(function(use)
 	use("neovim/nvim-lspconfig") -- Collection of configurations for built-in LSP client
 	use("hrsh7th/nvim-cmp") -- Autocompletion plugin
 	use("hrsh7th/cmp-nvim-lsp")
+	use("hrsh7th/cmp-path")
 	use("saadparwaiz1/cmp_luasnip")
 	use("L3MON4D3/LuaSnip") -- Snippets plugin
 	use("tpope/vim-surround") -- vim surround
@@ -339,24 +340,44 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
-lspconfig.ccls.setup({
+-- lspconfig.ccls.setup({
+-- 	on_attach = on_attach,
+-- 	capabilities = capabilities,
+-- 	init_options = {
+-- 		index = {
+-- 			threads = 6,
+-- 		},
+-- 		cache = {
+-- 			directory = "/home/yangxing/.ccls-cache",
+-- 		},
+-- 		clang = {
+-- 			excludeArgs = { "-frounding-math" },
+-- 		},
+-- 	},
+-- })
+
+lspconfig.pylsp.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
-	init_options = {
-		index = {
-			threads = 6,
-		},
-		cache = {
-			directory = "/home/yangxing/.ccls-cache",
-		},
-		clang = {
-			excludeArgs = { "-frounding-math" },
+	settings = {
+		pylsp = {
+			plugins = {
+				configurationSources = { "flake8", "mypy" },
+				flake8 = { enabled = true, maxLineLength = 120 },
+				jedi_completion = {
+					enabled = true,
+					include_params = true,
+				},
+				mypy = { enabled = false },
+				pycodestyle = { enabled = false },
+				pyflakes = { enabled = false },
+			},
 		},
 	},
 })
 
 -- Enable the following language servers
-local servers = { "rust_analyzer", "pyright", "tsserver" }
+local servers = { "rust_analyzer", "tsserver","clangd" }
 for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup({
 		on_attach = on_attach,
@@ -375,6 +396,9 @@ lspconfig.sumneko_lua.setup({
 	capabilities = capabilities,
 	settings = {
 		Lua = {
+			completion = {
+				callSnippet = "Replace",
+			},
 			runtime = {
 				-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
 				version = "LuaJIT",
@@ -438,12 +462,8 @@ local cmp = require("cmp")
 
 cmp.setup({
 	snippet = {
-		-- REQUIRED - you must specify a snippet engine
 		expand = function(args)
-			-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-			require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
-			-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-			-- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+			require("luasnip").lsp_expand(args.body)
 		end,
 	},
 	mapping = {
@@ -455,7 +475,7 @@ cmp.setup({
 		["<C-e>"] = cmp.mapping.close(),
 		["<CR>"] = cmp.mapping.confirm({
 			behavior = cmp.ConfirmBehavior.Replace,
-			select = true,
+			select = false,
 		}),
 		["<Tab>"] = cmp.mapping(function(fallback)
 			if luasnip.expand_or_jumpable() then
@@ -489,8 +509,8 @@ cmp.setup({
 		end, { "i", "s" }),
 	},
 	sources = cmp.config.sources({
-		{ name = "luasnip" }, -- For luasnip users.
 		{ name = "nvim_lsp" },
+		{ name = "luasnip" }, -- For luasnip users.
 	}, {
 		{ name = "buffer" },
 		{ name = "path" },
