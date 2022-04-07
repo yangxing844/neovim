@@ -3,6 +3,7 @@ require("packer").startup(function(use)
 	use("tpope/vim-fugitive") -- Git commands in nvim
 	use("tpope/vim-rhubarb") -- Fugitive-companion to interact with github
 	use("numToStr/Comment.nvim") -- "gc" to comment visual regions/lines
+	use("p00f/nvim-ts-rainbow")
 	-- use 'ludovicchabant/vim-gutentags' -- Automatic tags management
 	-- UI to select things (files, grep results, open buffers...)
 	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
@@ -251,6 +252,14 @@ require("nvim-treesitter.configs").setup({
 	highlight = {
 		enable = true, -- false will disable the whole extension
 	},
+	rainbow = {
+		enable = true,
+		-- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
+		extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+		max_file_lines = nil, -- Do not enable for files with more than n lines, int
+		-- colors = {}, -- table of hex strings
+		-- termcolors = {} -- table of colour name strings
+	},
 	incremental_selection = {
 		enable = true,
 		keymaps = {
@@ -340,21 +349,21 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
--- lspconfig.ccls.setup({
--- 	on_attach = on_attach,
--- 	capabilities = capabilities,
--- 	init_options = {
--- 		index = {
--- 			threads = 6,
--- 		},
--- 		cache = {
--- 			directory = "/home/yangxing/.ccls-cache",
--- 		},
--- 		clang = {
--- 			excludeArgs = { "-frounding-math" },
--- 		},
--- 	},
--- })
+lspconfig.ccls.setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+	init_options = {
+		index = {
+			threads = 6,
+		},
+		cache = {
+			directory = "/home/yangxing/.ccls-cache",
+		},
+		clang = {
+			excludeArgs = { "-frounding-math" },
+		},
+	},
+})
 
 lspconfig.pylsp.setup({
 	on_attach = on_attach,
@@ -377,7 +386,7 @@ lspconfig.pylsp.setup({
 })
 
 -- Enable the following language servers
-local servers = { "rust_analyzer", "tsserver","clangd" }
+local servers = { "rust_analyzer", "tsserver" }
 for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup({
 		on_attach = on_attach,
@@ -465,6 +474,12 @@ cmp.setup({
 		expand = function(args)
 			require("luasnip").lsp_expand(args.body)
 		end,
+	},
+	view = {
+		entries = native,
+	},
+	experimental = {
+		ghost_text = false,
 	},
 	mapping = {
 		["<C-p>"] = cmp.mapping.select_prev_item(),
