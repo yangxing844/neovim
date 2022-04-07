@@ -353,13 +353,15 @@ lspconfig.ccls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
 	init_options = {
+		compilationDatabaseDirectory = "build",
 		index = {
-			threads = 6,
+			threads = 0,
 		},
 		cache = {
-			directory = "/home/yangxing/.ccls-cache",
+			directory = "/home/yangxing/.ccls-cache", -- set to empty string to avoid disk writting
 		},
 		clang = {
+			extraArgs = { "-std=c++2a" },
 			excludeArgs = { "-frounding-math" },
 		},
 	},
