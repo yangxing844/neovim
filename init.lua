@@ -5,6 +5,7 @@ require("packer").startup(function(use)
 	use("numToStr/Comment.nvim") -- "gc" to comment visual regions/lines
 	use("p00f/nvim-ts-rainbow")
 	-- use 'ludovicchabant/vim-gutentags' -- Automatic tags management
+	use("norcalli/nvim-colorizer.lua")
 	-- UI to select things (files, grep results, open buffers...)
 	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
@@ -43,9 +44,7 @@ require("packer").startup(function(use)
 		requires = {
 			"kyazdani42/nvim-web-devicons", -- optional, for file icon
 		},
-		config = function()
-			require("nvim-tree").setup({})
-		end,
+		config = function() end,
 	})
 	use("windwp/nvim-autopairs")
 end)
@@ -91,6 +90,12 @@ require("lualine").setup({
 	},
 })
 
+require("nvim-tree").setup({
+	update_focused_file = {
+		enable = true,
+		update_cwd = true,
+	},
+})
 --Enable Comment.nvim
 require("Comment").setup()
 
@@ -433,7 +438,7 @@ lspconfig.sumneko_lua.setup({
 				parameters = "preview",
 			},
 			format = {
-				enable = true,
+				enable = false,
 			},
 		},
 	},
@@ -527,8 +532,8 @@ cmp.setup({
 	},
 	sources = cmp.config.sources({
 		{ name = "nvim_lsp" },
-		{ name = "luasnip" }, -- For luasnip users.
 	}, {
+		{ name = "luasnip" }, -- For luasnip users.
 		{ name = "buffer" },
 		{ name = "path" },
 	}),
@@ -564,7 +569,9 @@ autocmd! BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
-]])
+hi Conceal guibg=none ctermbg=none
+]]
+)
 require("settings")
 require("key-binding")
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })

@@ -21,6 +21,7 @@ local tex = {}
 local function VISUAL(args, snip)
 	return snip.env.SELECT_RAW
 end
+
 tex.in_mathzone = function()
 	return vim.fn["vimtex#syntax#in_mathzone"]() == 1
 end
@@ -81,12 +82,21 @@ return {
 		t({ "", "\\end{cases}" }),
 	}, { condition = tex.in_mathzone }),
 	s("item", {
-		t({ "\\begin{itemize}", "\t\\item " }),
-		i(1),
-		d(2, rec_ls, {}),
-		t({ "", "\\end{itemize}" }),
-		i(0),
-	}, { condition = tex.in_text }),
+		c(1, {
+			sn(nil, {
+				t({ "\\begin{itemize}", "\t\\item " }),
+				r(1, "user_text"),
+				d(2, rec_ls, {}),
+				t({ "", "\\end{itemize}" }),
+			}),
+			sn(nil, {
+				t({ "\\begin{enumerate}", "\t\\item " }),
+				r(1, "user_text"),
+				d(2, rec_ls, {}),
+				t({ "", "\\end{enumerate}" }),
+			}),
+		}),
+	}, { condition = tex.in_text, stored = { user_text = i(1, "") } }),
 },
 		-- autosnippet
 {
@@ -127,7 +137,14 @@ return {
 			end, {}),
 		}, { condition = tex.in_mathzone }),
 
-		s({ trig = "dm" }, { t({ "\\[", "\t" }), i(1), t({ "", "\\]" }) }, { condition = tex.in_text }),
+		s({ trig = "dm" }, {
+			c(1, {
+				sn(nil, { t({ "\\begin{equation}", "\t" }), r(1, "user_text"), t({ "", "\\end{equation}" }) }),
+				sn(nil, { t({ "\\[", "\t" }), r(1, "user_text"), t({ "", "\\]" }) }),
+			}),
+		}, { condition = tex.in_text, stored = {
+			user_text = i(1, ""),
+		} }),
 		s({ trig = "jk", wordTrig = false }, { t("^{"), i(1), t("}") }),
 		s({ trig = "fd", wordTrig = false }, { t("_{"), i(1), t("}") }),
 		s({ trig = "==" }, { t("&=") }, { condition = tex.in_mathzone }),
@@ -144,4 +161,5 @@ return {
 		}, { condition = conds.line_begin }),
 		s({ trig = "mk" }, { t("$"), i(1), t({ "$" }) }),
 		s({ trig = "sq" }, { t("\\sqrt{"), i(1), t("}") }, { tex.in_text }),
+		ls.parser.parse_snippet({ trig = "hat" }, "\\hat{${1}}"),
 	}
