@@ -49,6 +49,17 @@ require("packer").startup(function(use)
 	use("windwp/nvim-autopairs")
 end)
 
+local npairs = require("nvim-autopairs")
+
+npairs.setup({
+	check_ts = true,
+	fast_wrap = {},
+	ts_config = {
+		lua = { "string" }, -- it will not add a pair on that treesitter node
+		javascript = { "template_string" },
+		java = false, -- don't check treesitter on java
+	},
+})
 --Set highlight on search
 vim.o.hlsearch = false
 
@@ -357,10 +368,13 @@ capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 lspconfig.ccls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
+	single_file_support = true,
 	init_options = {
 		compilationDatabaseDirectory = "build",
 		index = {
 			threads = 0,
+			multiVersion = 1,
+			multiVersionBlackList = "^/usr/include",
 		},
 		cache = {
 			directory = "/home/yangxing/.ccls-cache", -- set to empty string to avoid disk writting
@@ -452,7 +466,7 @@ require("luasnip").config.set_config({
 	enable_autosnippets = true,
 	updateevents = "TextChanged,TextChangedP,TextChangedI",
 	-- region_check_events = "CursorMoved,CursorHold,InsertEnter",
-	region_check_events = "CursorMoved,CursorMovedI,InsertEnter",
+	region_check_events = "InsertEnter",
 	-- delete_check_events = "TextChangedI,TextChangedP,TextChanged",
 	delete_check_events = "InsertLeave,InsertEnter",
 	-- treesitter-hl has 100, use something higher (default is 200).
@@ -570,8 +584,10 @@ autocmd! BufReadPost *
      \   exe "normal! g`\"" |
      \ endif
 hi Conceal guibg=none ctermbg=none
-]]
-)
+
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+]])
 require("settings")
 require("key-binding")
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
