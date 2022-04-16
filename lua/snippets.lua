@@ -32,13 +32,6 @@ ls.config.set_config({
 	-- deleted snippets is performed.
 	-- This can be especially useful when `history` is enabled.
 	delete_check_events = "TextChanged",
-	ext_opts = {
-		[types.choiceNode] = {
-			active = {
-				virt_text = { { "choiceNode", "Comment" } },
-			},
-		},
-	},
 	-- treesitter-hl has 100, use something higher (default is 200).
 	ext_base_prio = 300,
 	-- minimal increase in priority.
@@ -114,10 +107,7 @@ local function jdocsnip(args, _, old_state)
 			else
 				inode = i(insert)
 			end
-			vim.list_extend(
-				nodes,
-				{ t({ " * @param " .. arg .. " " }), inode, t({ "", "" }) }
-			)
+			vim.list_extend(nodes, { t({ " * @param " .. arg .. " " }), inode, t({ "", "" }) })
 			param_nodes["arg" .. arg] = inode
 
 			insert = insert + 1
@@ -132,10 +122,7 @@ local function jdocsnip(args, _, old_state)
 			inode = i(insert)
 		end
 
-		vim.list_extend(
-			nodes,
-			{ t({ " * ", " * @return " }), inode, t({ "", "" }) }
-		)
+		vim.list_extend(nodes, { t({ " * ", " * @return " }), inode, t({ "", "" }) })
 		param_nodes.ret = inode
 		insert = insert + 1
 	end
@@ -148,10 +135,7 @@ local function jdocsnip(args, _, old_state)
 		else
 			ins = i(insert)
 		end
-		vim.list_extend(
-			nodes,
-			{ t({ " * ", " * @throws " .. exc .. " " }), ins, t({ "", "" }) }
-		)
+		vim.list_extend(nodes, { t({ " * ", " * @throws " .. exc .. " " }), ins, t({ "", "" }) })
 		param_nodes.ex = ins
 		insert = insert + 1
 	end
@@ -283,10 +267,7 @@ ls.add_snippets("all", {
 	-- `fmta` is a convenient wrapper that uses `<>` instead of `{}`.
 	s("fmt5", fmta("foo() { return <>; }", i(1, "x"))),
 	-- By default all args must be used. Use strict=false to disable the check
-	s(
-		"fmt6",
-		fmt("use {} only", { t("this"), t("not this") }, { strict = false })
-	),
+	s("fmt6", fmt("use {} only", { t("this"), t("not this") }, { strict = false })),
 	-- Use a dynamic_node to interpolate the output of a
 	-- function (see date_input above) into the initial
 	-- value of an insert_node.
@@ -298,19 +279,11 @@ ls.add_snippets("all", {
 	-- Parsing snippets: First parameter: Snippet-Trigger, Second: Snippet body.
 	-- Placeholders are parsed into choices with 1. the placeholder text(as a snippet) and 2. an empty string.
 	-- This means they are not SELECTed like in other editors/Snippet engines.
-	ls.parser.parse_snippet(
-		"lspsyn",
-		"Wow! This ${1:Stuff} really ${2:works. ${3:Well, a bit.}}"
-	),
+	ls.parser.parse_snippet("lspsyn", "Wow! This ${1:Stuff} really ${2:works. ${3:Well, a bit.}}"),
 
 	-- When wordTrig is set to false, snippets may also expand inside other words.
-	ls.parser.parse_snippet(
-		{ trig = "te", wordTrig = false },
-		"${1:cond} ? ${2:true} : ${3:false}"
-	),
+	ls.parser.parse_snippet({ trig = "te", wordTrig = false }, "${1:cond} ? ${2:true} : ${3:false}"),
 
-	-- When regTrig is set, trig is treated like a pattern, this snippet will expand after any number.
-	ls.parser.parse_snippet({ trig = "%d", regTrig = true }, "A Number!!"),
 	-- Using the condition, it's possible to allow expansion only in specific cases.
 	s("cond", {
 		t("will only expand in c-style comments"),
@@ -318,33 +291,6 @@ ls.add_snippets("all", {
 		condition = function(line_to_cursor, matched_trigger, captures)
 			-- optional whitespace followed by //
 			return line_to_cursor:match("%s*//")
-		end,
-	}),
-	-- there's some built-in conditions in "luasnip.extras.expand_conditions".
-	s("cond2", {
-		t("will only expand at the beginning of the line"),
-	}, {
-		condition = conds.line_begin,
-	}),
-	-- The last entry of args passed to the user-function is the surrounding snippet.
-	s(
-		{ trig = "a%d", regTrig = true },
-		f(function(_, snip)
-			return "Triggered with " .. snip.trigger .. "."
-		end, {})
-	),
-	-- It's possible to use capture-groups inside regex-triggers.
-	s(
-		{ trig = "b(%d)", regTrig = true },
-		f(function(_, snip)
-			return "Captured Text: " .. snip.captures[1] .. "."
-		end, {})
-	),
-	s({ trig = "c(%d+)", regTrig = true }, {
-		t("will only expand for even numbers"),
-	}, {
-		condition = function(line_to_cursor, matched_trigger, captures)
-			return tonumber(captures[1]) % 2 == 0
 		end,
 	}),
 	-- Use a function to execute any shell command and print its text.
@@ -410,11 +356,7 @@ ls.add_snippets("all", {
 	s("mat3", {
 		i(1, { "sample_text" }),
 		t(": "),
-		m(
-			1,
-			l._1:gsub("[123]", ""):match("%d"),
-			"contains a number that isn't 1, 2 or 3!"
-		),
+		m(1, l._1:gsub("[123]", ""):match("%d"), "contains a number that isn't 1, 2 or 3!"),
 	}),
 	-- `match` also accepts a function in place of the condition, which in
 	-- turn accepts the usual functionNode-args.
@@ -503,16 +445,6 @@ ls.add_snippets("tex", {
 	}),
 }, {
 	key = "tex",
-})
-
--- set type to "autosnippets" for adding autotriggered snippets.
-ls.add_snippets("all", {
-	s("autotrigger", {
-		t("autosnippet"),
-	}),
-}, {
-	type = "autosnippets",
-	key = "all_auto",
 })
 
 -- in a lua file: search lua-, then c-, then all-snippets.

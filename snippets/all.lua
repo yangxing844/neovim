@@ -125,8 +125,8 @@ ls.add_snippets('all', todo_comment_snippets, { type = 'snippets', key = 'todo_c
 
 return {
 	ls.parser.parse_snippet("mail", "yangxing844@gmail.com"),
-	s({ trig = "ymd", name = "Current date", dscr = "Insert the current date" }, {
-		p(os.date, "%Y-%m-%d"),
+	s({ trig = "date", name = "Current date", dscr = "Insert the current date" }, {
+		p(os.date, "%A, %B %d of %Y"),
 	}),
 	s({ trig = "snip", name = "snip for luasnip", decr = "expand to a snippet template" }, {
 		t('s({ trig="'),

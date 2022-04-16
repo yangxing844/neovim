@@ -1,5 +1,3 @@
-let b:AutoPairs =  {'(':')', '[':']', '{':'}','"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''",'$':'$'} |
-let b:loaded_matchparen=1
 setlocal shiftwidth=2
 "correct spell error on the fly
 setlocal spell
@@ -15,12 +13,6 @@ let g:vimtex_compiler_progname = 'nvr'
 call vimtex#imaps#add_map({
       \ 'lhs' : 'i',
       \ 'rhs' : '\im',
-	  \ 'wrapper' : 'vimtex#imaps#wrap_trivial',
-      \ 'leader': ';'
-      \})
-call vimtex#imaps#add_map({
-      \ 'lhs' : 'H',
-	  \ 'rhs' : '\mathcal{H}',
-	  \ 'wrapper' : 'vimtex#imaps#wrap_trivial',
+	  \ 'wrapper' : 'vimtex#imaps#wrap_math',
       \ 'leader': ';'
       \})

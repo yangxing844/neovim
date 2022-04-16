@@ -214,55 +214,6 @@ require("nvim-tree").setup({
 	},
 })
 --Add leader shortcuts
-vim.api.nvim_set_keymap("n", "<leader><space>", [[<cmd>NvimTreeToggle<CR>]], { noremap = true, silent = true })
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sf",
-	[[<cmd>lua require('telescope.builtin').find_files({previewer = false})<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sb",
-	[[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sh",
-	[[<cmd>lua require('telescope.builtin').help_tags()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>st",
-	[[<cmd>lua require('telescope.builtin').tags()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sd",
-	[[<cmd>lua require('telescope.builtin').grep_string()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sp",
-	[[<cmd>lua require('telescope.builtin').live_grep()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>so",
-	[[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>?",
-	[[<cmd>lua require('telescope.builtin').oldfiles()<CR>]],
-	{ noremap = true, silent = true }
-)
 
 require("nvim-treesitter.configs").setup({
 	highlight = {
@@ -324,11 +275,6 @@ require("nvim-treesitter.configs").setup({
 })
 
 -- Diagnostic keymaps
-vim.api.nvim_set_keymap("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", { noremap = true, silent = true })
-
 -- LSP settings
 local lspconfig = require("lspconfig")
 local on_attach = function(_, bufnr)
@@ -421,42 +367,36 @@ local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
-lspconfig.sumneko_lua.setup({
-	on_attach = on_attach,
-	capabilities = capabilities,
-	settings = {
-		Lua = {
-			completion = {
-				callSnippet = "Replace",
-			},
-			runtime = {
-				-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-				version = "LuaJIT",
-				-- Setup your lua path
-				path = runtime_path,
-			},
-			diagnostics = {
-				enable = false,
-				-- Get the language server to recognize the `vim` global
-				globals = { "vim" },
-			},
-			workspace = {
-				-- Make the server aware of Neovim runtime files
-				library = vim.api.nvim_get_runtime_file("", true),
-			},
-			-- Do not send telemetry data containing a randomized but unique identifier
-			telemetry = {
-				enable = false,
-			},
-			misc = {
-				parameters = "preview",
-			},
-			format = {
-				enable = false,
-			},
-		},
-	},
-})
+-- lspconfig.sumneko_lua.setup({
+-- 	on_attach = on_attach,
+-- 	capabilities = capabilities,
+-- 	settings = {
+-- 		Lua = {
+-- 			completion = {
+-- 				callSnippet = "Replace",
+-- 			},
+-- 			runtime = {
+-- 				-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+-- 				version = "LuaJIT",
+-- 				-- Setup your lua path
+-- 				path = runtime_path,
+-- 			},
+-- 			diagnostics = {
+-- 				enable = true,
+-- 				-- Get the language server to recognize the `vim` global
+-- 				globals = { "vim" },
+-- 			},
+-- 			workspace = {
+-- 				-- Make the server aware of Neovim runtime files
+-- 				library = vim.api.nvim_get_runtime_file("", true),
+-- 			},
+-- 			-- Do not send telemetry data containing a randomized but unique identifier
+-- 			telemetry = {
+-- 				enable = false,
+-- 			},
+-- 		},
+-- 	},
+-- })
 
 -- luasnip setup
 local luasnip = require("luasnip")
@@ -560,13 +500,25 @@ require("null-ls").setup({
 		-- require("null-ls").builtins.completion.spell,
 	},
 })
-
+vim.diagnostic.config({
+	virtual_text = false,
+	signs = true,
+	underline = true,
+	update_in_insert = false,
+	severity_sort = false,
+})
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+	local hl = "DiagnosticSign" .. type
+	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
 -- vimtex setup
 vim.g.tex_flavor = "latex"
 vim.g.vimtex_view_automatic = 0
 vim.g.vimtex_quickfix_mode = 0
 vim.g.vimtex_imaps_leader = ";"
 vim.g.vimtex_fold_enabled = 1
+vim.g.vimtex_view_method = "zathura"
 
 -- undofir in tmpfs
 local undodir = "/tmp/.undodir_" .. os.getenv("USER")
@@ -577,14 +529,13 @@ vim.o.undodir = undodir
 
 -- change cursor shape back
 vim.cmd([[ 
-au VimLeave * set guicursor=a:hor1
 autocmd! FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
 autocmd! BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
 hi Conceal guibg=none ctermbg=none
-
+hi DiagnosticVirtualTextWarn guibg=none
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 ]])
