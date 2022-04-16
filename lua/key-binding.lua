@@ -13,7 +13,7 @@ end
 
 local external_update_id = 0
 -- func_indx to update the dynamicNode with different functions.
-function dynamic_node_external_update(func_indx)
+function Dynamic_node_external_update(func_indx)
 	-- most of this function is about restoring the cursor to the correct
 	-- position+mode, the important part are the few lines from
 	-- `dynamic_node.snip:store()`.
@@ -159,11 +159,11 @@ vim.api.nvim_set_keymap(
 	[[<cmd>lua require('telescope.builtin').oldfiles()<CR>]],
 	{ noremap = true, silent = true }
 )
-vim.api.nvim_set_keymap("i", "<C-t>", "<cmd>lua _G.dynamic_node_external_update(1)<Cr>", { noremap = true })
-vim.api.nvim_set_keymap("s", "<C-t>", "<cmd>lua _G.dynamic_node_external_update(1)<Cr>", { noremap = true })
+vim.api.nvim_set_keymap("i", "<C-t>", "<cmd>lua _G.Dynamic_node_external_update(1)<Cr>", { noremap = true })
+vim.api.nvim_set_keymap("s", "<C-t>", "<cmd>lua _G.Dynamic_node_external_update(1)<Cr>", { noremap = true })
 
-vim.api.nvim_set_keymap("i", "<C-g>", "<cmd>lua _G.dynamic_node_external_update(2)<Cr>", { noremap = true })
-vim.api.nvim_set_keymap("s", "<C-g>", "<cmd>lua _G.dynamic_node_external_update(2)<Cr>", { noremap = true })
+vim.api.nvim_set_keymap("i", "<C-g>", "<cmd>lua _G.Dynamic_node_external_update(2)<Cr>", { noremap = true })
+vim.api.nvim_set_keymap("s", "<C-g>", "<cmd>lua _G.Dynamic_node_external_update(2)<Cr>", { noremap = true })
 
 vim.api.nvim_set_keymap("t", "<C-j>", "<C-\\><C-n><C-w><C-j>a", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
