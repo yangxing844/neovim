@@ -1,3 +1,5 @@
+require("settings")
+require("key-binding")
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim") -- Package manager
 	use("tpope/vim-fugitive") -- Git commands in nvim
@@ -47,6 +49,7 @@ require("packer").startup(function(use)
 		config = function() end,
 	})
 	use("windwp/nvim-autopairs")
+	use({ "CRAG666/code_runner.nvim", requires = "nvim-lua/plenary.nvim" })
 end)
 
 local npairs = require("nvim-autopairs")
@@ -60,34 +63,6 @@ npairs.setup({
 		java = false, -- don't check treesitter on java
 	},
 })
---Set highlight on search
-vim.o.hlsearch = false
-
---Make line numbers default
-vim.wo.number = true
-
---Enable mouse mode
-vim.o.mouse = "a"
-
---Enable break indent
-vim.o.breakindent = true
-
---Save undo history
-vim.opt.undofile = true
-
---Case insensitive searching UNLESS /C or capital in search
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
---Decrease update time
-vim.o.updatetime = 250
-vim.wo.signcolumn = "yes"
-
---Set colorscheme
-vim.o.termguicolors = true
-require("onedark").load()
--- Set completeopt to have a better completion experience
-vim.o.completeopt = "menuone,noselect"
 
 require("nvim-autopairs").setup({})
 
@@ -109,15 +84,34 @@ require("nvim-tree").setup({
 })
 --Enable Comment.nvim
 require("Comment").setup()
-
---Remap space as leader key
-vim.api.nvim_set_keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
---Remap for dealing with word wrap
-vim.api.nvim_set_keymap("n", "k", "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
-vim.api.nvim_set_keymap("n", "j", "v:count == 0 ? 'gj' : 'j'", { noremap = true, expr = true, silent = true })
+require("code_runner").setup({
+	term = {
+		position = "belowright",
+		size = 8,
+		mode = "",
+	},
+	filetype = {
+		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+		python = "python ",
+		typescript = "deno run",
+		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt",
+		cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+	},
+	project = {
+		["~/playground/c++/open-gl"] = {
+			name = "open gl learning",
+			description = "repo to learn open gl",
+			file_name = "main.cpp",
+			command = "make -C build run",
+		},
+		["~/deno/example"] = {
+			name = "ExapleDeno",
+			description = "Project with deno using other command",
+			file_name = "http/main.ts",
+			command = "deno run --allow-net",
+		},
+	},
+})
 
 -- Highlight on yank
 vim.cmd([[
@@ -128,10 +122,10 @@ vim.cmd([[
 ]])
 
 --Map blankline
-
 require("indent_blankline").setup({
 	space_char_blankline = " ",
-	show_current_context = true,
+	-- show_current_context = true,
+	max_indent_increase = 1,
 	filetype_exclude = { "help", "packer" },
 	buftype_exclude = { "terminal", "nofile" },
 	show_trailing_blankline_indent = false,
@@ -204,7 +198,7 @@ require("nvim-tree").setup({
 			list = {
 				{ key = { "<2-RightMouse>", "<C-]>" }, action = "cd" },
 				{ key = { "<CR>", "o", "<2-LeftMouse>", "l" }, action = "edit" },
-				{ key = { "-", "h" }, action = "dir_up" },
+				{ key = { "-", "<Enter>" }, action = "dir_up" },
 			},
 		},
 	},
@@ -297,7 +291,6 @@ local on_attach = function(_, bufnr)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "ff", "<cmd>lua vim.lsp.buf.formatting_sync()<CR>", opts)
 	vim.api.nvim_buf_set_keymap(
 		bufnr,
 		"n",
@@ -311,26 +304,27 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
-lspconfig.ccls.setup({
-	on_attach = on_attach,
-	capabilities = capabilities,
-	single_file_support = true,
-	init_options = {
-		compilationDatabaseDirectory = "build",
-		index = {
-			threads = 0,
-			multiVersion = 1,
-			multiVersionBlackList = "^/usr/include",
-		},
-		cache = {
-			directory = "/home/yangxing/.ccls-cache", -- set to empty string to avoid disk writting
-		},
-		clang = {
-			extraArgs = { "-std=c++2a" },
-			excludeArgs = { "-frounding-math" },
-		},
-	},
-})
+-- lspconfig.ccls.setup({
+-- 	on_attach = on_attach,
+-- 	capabilities = capabilities,
+-- 	single_file_support = true,
+-- 	init_options = {
+-- 		-- compilationDatabaseDirectory = "build",
+-- 		index = {
+-- 			threads = 0,
+-- 			multiVersion = 1,
+-- 			multiVersionBlackList = "^/usr/include",
+-- 		},
+-- 		cache = {
+-- 			directory = "", -- set to empty string to avoid disk writting
+-- 		},
+-- 		clang = {
+-- 			extraArgs = { "-std=c++2a" },
+-- 			excludeArgs = { "-frounding-math" },
+-- 		},
+-- 	},
+-- })
+
 
 lspconfig.pylsp.setup({
 	on_attach = on_attach,
@@ -353,7 +347,7 @@ lspconfig.pylsp.setup({
 })
 
 -- Enable the following language servers
-local servers = { "rust_analyzer", "tsserver" }
+local servers = { "rust_analyzer", "tsserver","clangd","texlab" }
 for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup({
 		on_attach = on_attach,
@@ -367,6 +361,39 @@ local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
+-- lspconfig.sumneko_lua.setup({
+-- 	on_attach = function(client)
+-- 		client.resolved_capabilities.document_formatting = false
+-- 		client.resolved_capabilities.document_range_formatting = false
+-- 	end,
+-- 	capabilities = capabilities,
+-- 	settings = {
+-- 		Lua = {
+-- 			completion = {
+-- 				callSnippet = "Replace",
+-- 			},
+-- 			runtime = {
+-- 				-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+-- 				version = "LuaJIT",
+-- 				-- Setup your lua path
+-- 				path = runtime_path,
+-- 			},
+-- 			diagnostics = {
+-- 				enable = true,
+-- 				-- Get the language server to recognize the `vim` global
+-- 				globals = { "vim" },
+-- 			},
+-- 			workspace = {
+-- 				-- Make the server aware of Neovim runtime files
+-- 				library = vim.api.nvim_get_runtime_file("", true),
+-- 			},
+-- 			-- Do not send telemetry data containing a randomized but unique identifier
+-- 			telemetry = {
+-- 				enable = false,
+-- 			},
+-- 		},
+-- 	},
+-- })
 -- luasnip setup
 local luasnip = require("luasnip")
 local types = require("luasnip.util.types")
@@ -404,9 +431,6 @@ cmp.setup({
 		expand = function(args)
 			require("luasnip").lsp_expand(args.body)
 		end,
-	},
-	view = {
-		entries = native,
 	},
 	experimental = {
 		ghost_text = false,
@@ -465,8 +489,8 @@ cmp.setup({
 require("null-ls").setup({
 	sources = {
 		require("null-ls").builtins.formatting.stylua,
+		require("null-ls").builtins.formatting.jq,
 		require("null-ls").builtins.diagnostics.eslint,
-		-- require("null-ls").builtins.completion.spell,
 	},
 })
 vim.diagnostic.config({
@@ -508,6 +532,4 @@ hi DiagnosticVirtualTextWarn guibg=none
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 ]])
-require("settings")
-require("key-binding")
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })

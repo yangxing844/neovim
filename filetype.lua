@@ -1,8 +1,6 @@
-vim.filetype.add(
-	{
-		extension = {
-			c = "c", 
-			cpp = "cpp"
-		}
-	}
-)
+vim.filetype.add({
+	extension = {
+		c = "c",
+		cpp = "cpp",
+	},
+})

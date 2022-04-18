@@ -11,10 +11,8 @@ vim.o.history = 1000
 vim.o.timeoutlen = 500
 vim.opt.listchars:append("precedes:<,extends:>")
 vim.o.backspace = "indent,eol,start"
-vim.o.updatetime = 700
 vim.o.relativenumber = true
 vim.o.number = true
-vim.o.updatetime = 700
 vim.o.cindent = true
 vim.o.copyindent = true
 vim.o.backup = false
@@ -24,10 +22,8 @@ vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.showmatch = true
-vim.o.hlsearch = true
 vim.o.magic = true
 vim.opt.clipboard:append("unnamedplus")
-vim.o.termguicolors = true
 vim.o.fileformats = "unix,dos,mac"
 vim.o.fileencodings = "utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1"
 vim.o.enc = "utf-8"
@@ -51,5 +47,34 @@ vim.o.undofile = true
 vim.opt.autochdir = true
 vim.opt.laststatus = 3
 -- use only filetype.lua to detect filetype
-vim.g.do_filetype_lua = 1
-vim.g.did_load_filetypes=0
+-- vim.g.do_filetype_lua = 1
+-- vim.g.did_load_filetypes = 1
+
+--Set highlight on search
+vim.o.hlsearch = false
+
+--Make line numbers default
+vim.wo.number = true
+
+--Enable mouse mode
+vim.o.mouse = "a"
+
+--Enable break indent
+vim.o.breakindent = true
+
+--Save undo history
+vim.opt.undofile = true
+
+--Case insensitive searching UNLESS /C or capital in search
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
+--Decrease update time
+vim.o.updatetime = 250
+vim.wo.signcolumn = "yes"
+
+--Set colorscheme
+vim.o.termguicolors = true
+require("onedark").load()
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = "menuone,noselect"

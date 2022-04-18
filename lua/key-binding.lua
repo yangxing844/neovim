@@ -74,6 +74,15 @@ function Dynamic_node_external_update(func_indx)
 		ls.session.current_nodes[vim.api.nvim_get_current_buf()] = dynamic_node.snip:jump_into(1)
 	end
 end
+
+--Remap space as leader key
+vim.api.nvim_set_keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+--Remap for dealing with word wrap
+vim.api.nvim_set_keymap("n", "k", "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
+vim.api.nvim_set_keymap("n", "j", "v:count == 0 ? 'gj' : 'j'", { noremap = true, expr = true, silent = true })
 -------------
 --  nmaps  --
 -------------
@@ -181,3 +190,11 @@ vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<
 })
 
 vim.api.nvim_set_keymap("n", "ff", "<cmd>lua vim.lsp.buf.formatting_sync()<CR>", { noremap = true, silent = true })
+
+-- code_runner keybinding
+vim.api.nvim_set_keymap("n", "<leader>r", ":RunCode<CR>", { noremap = true, silent = false })
+vim.api.nvim_set_keymap("n", "<leader>rf", ":RunFile<CR>", { noremap = true, silent = false })
+vim.api.nvim_set_keymap("n", "<leader>rp", ":RunProject<CR>", { noremap = true, silent = false })
+vim.api.nvim_set_keymap("n", "<leader>rc", ":RunClose<CR>", { noremap = true, silent = false })
+vim.api.nvim_set_keymap("n", "<leader>crf", ":CRFiletype<CR>", { noremap = true, silent = false })
+vim.api.nvim_set_keymap("n", "<leader>crp", ":CRProjects<CR>", { noremap = true, silent = false })

@@ -212,7 +212,9 @@ return { -- manual snippet
 		fmt(
 			[[
 \begin{{tabular}}{{{}}}
+\toprule
 {}
+\bottomrule
 \end{{tabular}}
 ]],
 			{
@@ -252,13 +254,12 @@ return { -- manual snippet
 	),
 	-- TODO: the label can be set with caption, with a little text from the first caption <13-04-22, yangxing>
 
-	s(
-		{ trig = "sec" },
-		{ t("\\section{"),i(1),f(function(_, snip)
-			return snip.env.TM_SELECTED_TEXT
-		end, {}), t("}") },
-		text
-	),
+	s({ trig = "sec" }, {
+		c(1, {
+			sn(nil, { t("\\section{"), r(1, "user_text"), t("}") }),
+			sn(nil, { t("\\chapter{"), r(1, "user_text"), t("}") }),
+		}),
+	}, { condition = tex.in_text, user_text = i(1, "name") }),
 },
 	{
 		s({ trig = "sin" }, { t("\\sin") }, math),
