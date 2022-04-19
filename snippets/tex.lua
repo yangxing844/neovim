@@ -73,6 +73,21 @@ rec_ls2 = function()
 		}),
 	})
 end
+
+local pinyin = require("pinyin")
+
+local title2label
+title2label = function(str)
+	local isEnglish = not str[1][1]:find("[^%a%s]")
+	local newstr
+	if isEnglish then
+		newstr = str[1][1]:gsub("(%s)", "_")
+	else
+		newstr = pinyin(str[1][1], true, "_")
+	end
+	return newstr
+end
+
 return { -- manual snippet
 	s({ trig = "pac" }, { t({ "\\usepackage{" }), i(1), t({ "}" }) }, { condition = conds.line_begin }),
 	s({ trig = "template" }, {
@@ -256,8 +271,8 @@ return { -- manual snippet
 
 	s({ trig = "sec" }, {
 		c(1, {
-			sn(nil, { t("\\section{"), r(1, "user_text"), t("}") }),
-			sn(nil, { t("\\chapter{"), r(1, "user_text"), t("}") }),
+			sn(nil, { t("\\section{"), r(1, "user_text"), t({ "}", "\\label{sec:" }), f(title2label, { 1 }), t("}") }),
+			sn(nil, { t("\\chapter{"), r(1, "user_text"), t({ "}", "\\label{sec:" }), f(title2label, { 1 }), t("}") }),
 		}),
 	}, { condition = tex.in_text, user_text = i(1, "name") }),
 },

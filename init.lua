@@ -93,9 +93,11 @@ require("code_runner").setup({
 	filetype = {
 		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
 		python = "python ",
+		lua = "lua ",
 		typescript = "deno run",
 		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt",
-		cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+		cpp = "cd $dir && g++ $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
+		c = "cd $dir && gcc $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
 	},
 	project = {
 		["~/playground/c++/open-gl"] = {
@@ -325,7 +327,6 @@ capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 -- 	},
 -- })
 
-
 lspconfig.pylsp.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
@@ -347,7 +348,7 @@ lspconfig.pylsp.setup({
 })
 
 -- Enable the following language servers
-local servers = { "rust_analyzer", "tsserver","clangd","texlab" }
+local servers = { "rust_analyzer", "tsserver", "clangd", "texlab" }
 for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup({
 		on_attach = on_attach,
