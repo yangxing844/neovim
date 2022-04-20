@@ -218,7 +218,7 @@ return { -- manual snippet
 		    <4>
 		\end{table}
 		]],
-			{ i(1, "htbp"), i(2, "caption"), i(3, "label"), i(4) },
+			{ i(1, "htbp"), i(2, "caption"), f(title2label, { 2 }), i(3) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -263,16 +263,15 @@ return { -- manual snippet
 		    \label{fig:<5>}
 		\end{figure}
 		]],
-			{ i(1, "htbp"), i(2, "0.8"), i(3, "path_to_figure"), i(4, "caption"), i(5, "label") },
+			{ i(1, "htbp"), i(2, "0.8"), i(3, "path_to_figure"), i(4, "caption"), f(title2label, { 4 }) },
 			{ delimiters = "<>" }
 		)
 	),
-	-- TODO: the label can be set with caption, with a little text from the first caption <13-04-22, yangxing>
 
 	s({ trig = "sec" }, {
 		c(1, {
 			sn(nil, { t("\\section{"), r(1, "user_text"), t({ "}", "\\label{sec:" }), f(title2label, { 1 }), t("}") }),
-			sn(nil, { t("\\chapter{"), r(1, "user_text"), t({ "}", "\\label{sec:" }), f(title2label, { 1 }), t("}") }),
+			sn(nil, { t("\\chapter{"), r(1, "user_text"), t({ "}", "\\label{cha:" }), f(title2label, { 1 }), t("}") }),
 		}),
 	}, { condition = tex.in_text, user_text = i(1, "name") }),
 },

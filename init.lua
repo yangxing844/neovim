@@ -116,12 +116,12 @@ require("code_runner").setup({
 })
 
 -- Highlight on yank
-vim.cmd([[
-  augroup YankHighlight
-    autocmd!
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup end
-]])
+-- vim.cmd([[
+--   augroup YankHighlight
+--     autocmd!
+--     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+--   augroup end
+-- ]])
 
 --Map blankline
 require("indent_blankline").setup({
@@ -521,16 +521,23 @@ if not (os.rename(undodir, undodir)) then
 end
 vim.o.undodir = undodir
 
--- change cursor shape back
-vim.cmd([[ 
-autocmd! FileType * setlocal formatoptions -=c formatoptions -=r formatoptions -=o "disable auto commenting"
-autocmd! BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
-hi Conceal guibg=none ctermbg=none
-hi DiagnosticVirtualTextWarn guibg=none
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
-]])
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "*",
+	command = "setlocal formatoptions -=c formatoptions -=r formatoptions -=o ", --disable auto commenting
+})
+vim.api.nvim_create_autocmd("BufReadPost", {
+	pattern = "*",
+	command = 'normal! g`"',
+})
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
+vim.api.nvim_set_hl(0, "Conceal", { guibg = none })
+vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { guibg = none })
+
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
