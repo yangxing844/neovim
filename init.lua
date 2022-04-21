@@ -200,7 +200,7 @@ require("nvim-tree").setup({
 			list = {
 				{ key = { "<2-RightMouse>", "<C-]>" }, action = "cd" },
 				{ key = { "<CR>", "o", "<2-LeftMouse>", "l" }, action = "edit" },
-				{ key = { "-", "<Enter>" }, action = "dir_up" },
+				{ key = { "-", "<Backspace>" }, action = "dir_up" },
 			},
 		},
 	},
@@ -530,12 +530,12 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	command = 'normal! g`"',
 })
 
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = '*',
+vim.api.nvim_create_autocmd("TextYankPost", {
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+	group = highlight_group,
+	pattern = "*",
 })
 vim.api.nvim_set_hl(0, "Conceal", { guibg = none })
 vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { guibg = none })
