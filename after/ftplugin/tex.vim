@@ -1,7 +1,7 @@
 setlocal shiftwidth=2
 "correct spell error on the fly
-setlocal spell
-inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+" setlocal spell
+" inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 let g:vimtex_fold_types = {
       \ 'markers' : {'enabled': 1},

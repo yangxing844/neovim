@@ -95,9 +95,9 @@ require("code_runner").setup({
 		python = "python ",
 		lua = "lua ",
 		typescript = "deno run",
-		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt",
-		cpp = "cd $dir && g++ $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
-		c = "cd $dir && gcc $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
+		rust = "cd $dir && mkdir -p build && rustc $fileName && $dir/$fileNameWithoutExt",
+		cpp = "cd $dir && mkdir -p build && g++ $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
+		c = "cd $dir && mkdir -p build && gcc $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
 	},
 	project = {
 		["~/playground/c++/open-gl"] = {
@@ -114,14 +114,6 @@ require("code_runner").setup({
 		},
 	},
 })
-
--- Highlight on yank
--- vim.cmd([[
---   augroup YankHighlight
---     autocmd!
---     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
---   augroup end
--- ]])
 
 --Map blankline
 require("indent_blankline").setup({
