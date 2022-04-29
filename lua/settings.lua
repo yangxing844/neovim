@@ -46,6 +46,7 @@ vim.o.colorcolumn = "120"
 vim.o.undofile = true
 vim.opt.autochdir = true
 vim.opt.laststatus = 3
+vim.opt.grepprg='rg'
 -- use only filetype.lua to detect filetype
 -- vim.g.do_filetype_lua = 1
 -- vim.g.did_load_filetypes = 1

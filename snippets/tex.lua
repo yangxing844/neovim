@@ -350,7 +350,7 @@ return { -- manual snippet
 		),
 		s(
 			{ trig = "(\\?%w+)(,%.)", regTrig = true, hidden = true },
-			{ t("\\bm{"), f(function(_, snip)
+			{ t("\\symbfit{"), f(function(_, snip)
 				return snip.captures[1] .. "}"
 			end, {}) },
 			math

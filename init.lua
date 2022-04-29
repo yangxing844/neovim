@@ -6,6 +6,7 @@ require("packer").startup(function(use)
 	use("tpope/vim-rhubarb") -- Fugitive-companion to interact with github
 	use("numToStr/Comment.nvim") -- "gc" to comment visual regions/lines
 	use("p00f/nvim-ts-rainbow")
+	use("lewis6991/impatient.nvim")
 	-- use 'ludovicchabant/vim-gutentags' -- Automatic tags management
 	use("norcalli/nvim-colorizer.lua")
 	-- UI to select things (files, grep results, open buffers...)
@@ -52,7 +53,9 @@ require("packer").startup(function(use)
 	use({ "CRAG666/code_runner.nvim", requires = "nvim-lua/plenary.nvim" })
 end)
 
+require("impatient")
 local npairs = require("nvim-autopairs")
+local Rule = require("nvim-autopairs.rule")
 
 npairs.setup({
 	check_ts = true,
@@ -63,8 +66,36 @@ npairs.setup({
 		java = false, -- don't check treesitter on java
 	},
 })
-
-require("nvim-autopairs").setup({})
+npairs.add_rules({
+	Rule(" ", " "):with_pair(function(opts)
+		local pair = opts.line:sub(opts.col - 1, opts.col)
+		return vim.tbl_contains({ "()", "[]", "{}" }, pair)
+	end),
+	Rule("( ", " )")
+		:with_pair(function()
+			return false
+		end)
+		:with_move(function(opts)
+			return opts.prev_char:match(".%)") ~= nil
+		end)
+		:use_key(")"),
+	Rule("{ ", " }")
+		:with_pair(function()
+			return false
+		end)
+		:with_move(function(opts)
+			return opts.prev_char:match(".%}") ~= nil
+		end)
+		:use_key("}"),
+	Rule("[ ", " ]")
+		:with_pair(function()
+			return false
+		end)
+		:with_move(function(opts)
+			return opts.prev_char:match(".%]") ~= nil
+		end)
+		:use_key("]"),
+})
 
 --Set statusbar
 require("lualine").setup({
@@ -95,9 +126,9 @@ require("code_runner").setup({
 		python = "python ",
 		lua = "lua ",
 		typescript = "deno run",
-		rust = "cd $dir && mkdir -p build && rustc $fileName && $dir/$fileNameWithoutExt",
-		cpp = "cd $dir && mkdir -p build && g++ $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
-		c = "cd $dir && mkdir -p build && gcc $fileName -o build/$fileNameWithoutExt && $dir/build/$fileNameWithoutExt",
+		rust = "cd $dir && mkdir -p .bin && rustc $fileName && $dir/$fileNameWithoutExt",
+		cpp = "cd $dir && mkdir -p .bin && g++ $fileName -o .bin/$fileNameWithoutExt && $dir/.bin/$fileNameWithoutExt",
+		c = "cd $dir && mkdir -p .bin && gcc $fileName -o .bin/$fileNameWithoutExt && $dir/.bin/$fileNameWithoutExt",
 	},
 	project = {
 		["~/playground/c++/open-gl"] = {
@@ -265,6 +296,7 @@ require("nvim-treesitter.configs").setup({
 -- Diagnostic keymaps
 -- LSP settings
 local lspconfig = require("lspconfig")
+vim.lsp.set_log_level 'error'
 local on_attach = function(_, bufnr)
 	local opts = { noremap = true, silent = true }
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
@@ -531,5 +563,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 vim.api.nvim_set_hl(0, "Conceal", { guibg = none })
 vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { guibg = none })
+
 
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
