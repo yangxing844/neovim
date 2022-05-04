@@ -95,7 +95,7 @@ return { -- manual snippet
 			"\\documentclass[a4paper]{amsart}",
 			"\\usepackage{textcomp}",
 			"\\usepackage{amsmath,amssymb}",
-			"\\usepackage{graphics}",
+			"\\usepackage{graphix}",
 			"\\usepackage{bm}",
 			"\\usepackage{siunitx}",
 			"\\begin{document}",

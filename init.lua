@@ -296,7 +296,7 @@ require("nvim-treesitter.configs").setup({
 -- Diagnostic keymaps
 -- LSP settings
 local lspconfig = require("lspconfig")
-vim.lsp.set_log_level 'error'
+vim.lsp.set_log_level("error")
 local on_attach = function(_, bufnr)
 	local opts = { noremap = true, silent = true }
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
@@ -325,7 +325,6 @@ local on_attach = function(_, bufnr)
 		opts
 	)
 end
-
 -- nvim-cmp supports additional completion capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
@@ -563,6 +562,5 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 vim.api.nvim_set_hl(0, "Conceal", { guibg = none })
 vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { guibg = none })
-
 
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
