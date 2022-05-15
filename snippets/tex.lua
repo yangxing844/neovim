@@ -339,7 +339,7 @@ return { -- manual snippet
 			end, { 1 }),
 			t({ "}" }),
 		}, { condition = conds.line_begin }),
-		s({ trig = "mk" }, { t("$"), i(1), t({ "$" }) }),
+		s({ trig = "mk" }, { t("\\("), i(1), t({ "\\)" }) }),
 		s({ trig = "sq" }, { t("\\sqrt{"), i(1), t("}") }, math),
 		s(
 			{ trig = "(\\[a-zA-Z]*)%^", regTrig = true, hidden = true },

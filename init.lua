@@ -329,27 +329,6 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
--- lspconfig.ccls.setup({
--- 	on_attach = on_attach,
--- 	capabilities = capabilities,
--- 	single_file_support = true,
--- 	init_options = {
--- 		-- compilationDatabaseDirectory = "build",
--- 		index = {
--- 			threads = 0,
--- 			multiVersion = 1,
--- 			multiVersionBlackList = "^/usr/include",
--- 		},
--- 		cache = {
--- 			directory = "", -- set to empty string to avoid disk writting
--- 		},
--- 		clang = {
--- 			extraArgs = { "-std=c++2a" },
--- 			excludeArgs = { "-frounding-math" },
--- 		},
--- 	},
--- })
-
 lspconfig.pylsp.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,

@@ -80,3 +80,4 @@ require("onedark").load()
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = "menuone,noselect"
 vim.opt.virtualedit  = block
+vim.opt.listchars="eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣"
