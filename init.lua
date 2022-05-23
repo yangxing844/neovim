@@ -7,6 +7,7 @@ require("packer").startup(function(use)
 	use("numToStr/Comment.nvim") -- "gc" to comment visual regions/lines
 	use("p00f/nvim-ts-rainbow")
 	use("lewis6991/impatient.nvim")
+	use("mfussenegger/nvim-dap")
 	-- use 'ludovicchabant/vim-gutentags' -- Automatic tags management
 	use("norcalli/nvim-colorizer.lua")
 	-- UI to select things (files, grep results, open buffers...)
@@ -516,6 +517,16 @@ vim.g.vimtex_imaps_leader = ";"
 vim.g.vimtex_fold_enabled = 1
 vim.g.vimtex_view_method = "zathura"
 
+vim.g.vimtex_compiler_latexmk = {
+	options = {
+		"-verbose",
+		"-file-line-error",
+		"-synctex=1",
+		"-interaction=nonstopmode",
+		"-latexoption=-output-driver='xdvipdfmx -z3'",
+		"-halt-on-error",
+	},
+}
 -- undofir in tmpfs
 local undodir = "/tmp/.undodir_" .. os.getenv("USER")
 if not (os.rename(undodir, undodir)) then

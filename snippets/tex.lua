@@ -326,7 +326,7 @@ return { -- manual snippet
 			user_text = i(1, ""),
 		} }),
 		s({ trig = "jk", wordTrig = false }, { t("^{"), i(1), t("}") }),
-		s({ trig = "fd", wordTrig = false }, { t("_{"), i(1), t("}") }),
+		s({ trig = "fd", wordTrig = false }, { t("_{"), i(1), t("}") }, math),
 		s({ trig = "==" }, { t("&=") }, math),
 		s({ trig = "beg" }, {
 			t({ "\\begin{" }),

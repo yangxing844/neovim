@@ -76,125 +76,99 @@ function Dynamic_node_external_update(func_indx)
 end
 
 --Remap space as leader key
-vim.api.nvim_set_keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set("", "<Space>", "<Nop>")
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 --Remap for dealing with word wrap
-vim.api.nvim_set_keymap("n", "k", "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
-vim.api.nvim_set_keymap("n", "j", "v:count == 0 ? 'gj' : 'j'", { noremap = true, expr = true, silent = true })
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { noremap = true, expr = true, silent = true })
 -------------
 --  nmaps  --
 -------------
 
 -- Utility maps for repeatable quickly change/delete current word
-vim.api.nvim_set_keymap("n", "c*", "*``cgn", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "c#", "*``cgN", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "cg*", "g*``cgn", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "cg#", "g*``cgN", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "d*", "*``dgn", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "d#", "*``dgN", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "dg*", "g*``dgn", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "dg#", "g*``dgN", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "gV", "`[V`]", { noremap = true, silent = true })
+vim.keymap.set("n", "c*", "*``cgn")
+vim.keymap.set("n", "c#", "*``cgN")
+vim.keymap.set("n", "cg*", "g*``cgn")
+vim.keymap.set("n", "cg#", "g*``cgN")
+vim.keymap.set("n", "d*", "*``dgn")
+vim.keymap.set("n", "d#", "*``dgN")
+vim.keymap.set("n", "dg*", "g*``dgn")
+vim.keymap.set("n", "dg#", "g*``dgN")
+vim.keymap.set("n", "gV", "`[V`]")
 -- Buffer navigation
-vim.api.nvim_set_keymap("n", "]b", ":bnext<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "[b", ":bprevious<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "]B", ":blast<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "[B", ":bfirst<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "]b", ":bnext<cr>")
+vim.keymap.set("n", "[b", ":bprevious<cr>")
+vim.keymap.set("n", "]B", ":blast<cr>")
+vim.keymap.set("n", "[B", ":bfirst<cr>")
 -- quick edit
-vim.api.nvim_set_keymap("n", "<leader>xv", ":source $MYVIMRC <CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>ev", ":tabedit $MYVIMRC <CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "U", "<c-r>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>xv", ":source $MYVIMRC <CR>")
+vim.keymap.set("n", "<leader>ev", ":tabedit $MYVIMRC <CR>")
+vim.keymap.set("n", "U", "<c-r>")
 -- keep the next and previous search result centered
-vim.api.nvim_set_keymap("n", "n", "nzzzv", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "N", "Nzzzv", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "J", "mzJ'", { noremap = true, silent = true })
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("n", "J", "mzJ'")
 -- backspace to fold
-vim.api.nvim_set_keymap("n", "<backspace>", "za", { noremap = true, silent = true })
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>es",
-	'<cmd>lua require("luasnip.loaders.from_lua").edit_snippet_files()<CR>',
-	{ noremap = true, silent = true }
-)
+vim.keymap.set("n", "<backspace>", "za")
+vim.keymap.set("n", "<leader>es", function()
+	return require("luasnip.loaders.from_lua").edit_snippet_files()
+end)
 
-vim.api.nvim_set_keymap("n", "<leader><space>", [[<cmd>NvimTreeToggle<CR>]], { noremap = true, silent = true })
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sf",
-	[[<cmd>lua require('telescope.builtin').find_files({previewer = false})<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sb",
-	[[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sh",
-	[[<cmd>lua require('telescope.builtin').help_tags()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>st",
-	[[<cmd>lua require('telescope.builtin').tags()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sd",
-	[[<cmd>lua require('telescope.builtin').grep_string()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>sp",
-	[[<cmd>lua require('telescope.builtin').live_grep()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>so",
-	[[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>?",
-	[[<cmd>lua require('telescope.builtin').oldfiles()<CR>]],
-	{ noremap = true, silent = true }
-)
-vim.api.nvim_set_keymap("i", "<C-t>", "<cmd>lua _G.Dynamic_node_external_update(1)<Cr>", { noremap = true })
-vim.api.nvim_set_keymap("s", "<C-t>", "<cmd>lua _G.Dynamic_node_external_update(1)<Cr>", { noremap = true })
+vim.keymap.set("n", "<leader><space>", [[<cmd>NvimTreeToggle<CR>]], { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>sf", function()
+	return require("telescope.builtin").find_files({ previewer = false })
+end)
+vim.keymap.set("n", "<leader>sb", function()
+	return require("telescope.builtin").current_buffer_fuzzy_find()
+end)
+vim.keymap.set("n", "<leader>sh", function()
+	return require("telescope.builtin").help_tags()
+end)
+vim.keymap.set("n", "<leader>st", function()
+	return require("telescope.builtin").tags()
+end)
+vim.keymap.set("n", "<leader>sd", function()
+	return require("telescope.builtin").grep_string()
+end)
+vim.keymap.set("n", "<leader>sp", function()
+	return require("telescope.builtin").live_grep()
+end)
+vim.keymap.set("n", "<leader>so", function()
+	return require("telescope.builtin").tags({ only_current_buffer = true })
+end)
+vim.keymap.set("n", "<leader>?", function()
+	return require("telescope.builtin").oldfiles()
+end)
+vim.keymap.set("i", "<C-t>", "_G.Dynamic_node_external_update(1)")
+vim.keymap.set("s", "<C-t>", "_G.Dynamic_node_external_update(1)")
 
-vim.api.nvim_set_keymap("i", "<C-g>", "<cmd>lua _G.Dynamic_node_external_update(2)<Cr>", { noremap = true })
-vim.api.nvim_set_keymap("s", "<C-g>", "<cmd>lua _G.Dynamic_node_external_update(2)<Cr>", { noremap = true })
+vim.keymap.set("i", "<C-g>", "_G.Dynamic_node_external_update(2)")
+vim.keymap.set("s", "<C-g>", "_G.Dynamic_node_external_update(2)")
 
-vim.api.nvim_set_keymap("t", "<C-j>", "<C-\\><C-n><C-w><C-j>a", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("t", "<C-k>", "<C-\\><C-n><C-w><C-k>a", { noremap = true, silent = true })
+vim.keymap.set("t", "<C-j>", "<C-\\><C-n><C-w><C-j>a")
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
+vim.keymap.set("t", "<C-k>", "<C-\\><C-n><C-w><C-k>a")
 
-vim.api.nvim_set_keymap("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", {
-	noremap = true,
-	silent = true,
-})
-vim.api.nvim_set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", {
-	noremap = true,
-	silent = true,
-})
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
+vim.keymap.set("n", "ff", vim.lsp.buf.formatting_sync)
 
-vim.api.nvim_set_keymap("n", "ff", "<cmd>lua vim.lsp.buf.formatting_sync()<CR>", { noremap = true, silent = true })
-
+vim.keymap.set("n", "<leader>d", function()
+	diagnostics_active = not diagnostics_active
+	if diagnostics_active then
+		vim.diagnostic.show()
+	else
+		vim.diagnostic.hide()
+	end
+end)
 -- code_runner keybinding
-vim.api.nvim_set_keymap("n", "<leader>r", ":RunCode<CR>", { noremap = true, silent = false })
-vim.api.nvim_set_keymap("n", "<leader>rf", ":RunFile<CR>", { noremap = true, silent = false })
-vim.api.nvim_set_keymap("n", "<leader>rp", ":RunProject<CR>", { noremap = true, silent = false })
-vim.api.nvim_set_keymap("n", "<leader>rc", ":RunClose<CR>", { noremap = true, silent = false })
-vim.api.nvim_set_keymap("n", "<leader>crf", ":CRFiletype<CR>", { noremap = true, silent = false })
-vim.api.nvim_set_keymap("n", "<leader>crp", ":CRProjects<CR>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>r", ":RunCode<CR>")
+vim.keymap.set("n", "<leader>rf", ":RunFile<CR>")
+vim.keymap.set("n", "<leader>rp", ":RunProject<CR>")
+vim.keymap.set("n", "<leader>rc", ":RunClose<CR>")
+vim.keymap.set("n", "<leader>crf", ":CRFiletype<CR>")
+vim.keymap.set("n", "<leader>crp", ":CRProjects<CR>")
