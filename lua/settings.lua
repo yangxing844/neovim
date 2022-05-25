@@ -36,7 +36,7 @@ vim.opt.suffixesadd:append(".asy")
 -- vim.opt.isk:remove("_")
 vim.o.binary = true
 vim.o.eol = false
-vim.o.textwidth = 120
+vim.o.textwidth = 0
 vim.opt.cc:append("1")
 vim.o.smartcase = true
 vim.o.readonly = false
