@@ -42,11 +42,11 @@ vim.o.smartcase = true
 vim.o.readonly = false
 vim.o.scrolloff = 5
 vim.o.conceallevel = 1
-vim.o.colorcolumn = "120"
+vim.o.colorcolumn = "+4,+5"
 vim.o.undofile = true
 vim.opt.autochdir = true
 vim.opt.laststatus = 3
-vim.opt.grepprg='rg'
+vim.opt.grepprg = "rg"
 -- use only filetype.lua to detect filetype
 -- vim.g.do_filetype_lua = 1
 -- vim.g.did_load_filetypes = 1
@@ -79,5 +79,10 @@ vim.o.termguicolors = true
 require("onedark").load()
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = "menuone,noselect"
-vim.opt.virtualedit  = block
-vim.opt.listchars="eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣"
+vim.opt.virtualedit = block
+vim.opt.listchars = "eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣"
+
+-- fold related settings
+vim.opt.foldmethod = "expr"
+vim.opt.foldlevel = 99
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
