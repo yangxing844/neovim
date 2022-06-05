@@ -108,12 +108,6 @@ require("lualine").setup({
 	},
 })
 
-require("nvim-tree").setup({
-	update_focused_file = {
-		enable = true,
-		update_cwd = true,
-	},
-})
 --Enable Comment.nvim
 require("Comment").setup()
 require("code_runner").setup({
@@ -127,9 +121,9 @@ require("code_runner").setup({
 		python = "python ",
 		lua = "lua ",
 		typescript = "deno run",
-		rust = "cd $dir && mkdir -p .bin && rustc $fileName && $dir/$fileNameWithoutExt",
-		cpp = "cd $dir && mkdir -p .bin && g++ $fileName -o .bin/$fileNameWithoutExt && $dir/.bin/$fileNameWithoutExt",
-		c = "cd $dir && mkdir -p .bin && gcc $fileName -o .bin/$fileNameWithoutExt && $dir/.bin/$fileNameWithoutExt",
+		rust = "cd $dir && mkdir -p /tmp/bin/rust && rustc $fileName -o /tmp/bin/rust/$fileNameWithoutExt && /tmp/bin/rust/$fileNameWithoutExt",
+		cpp = "cd $dir && mkdir -p /tmp/bin/cpp && g++ $fileName -o /tmp/bin/cpp/$fileNameWithoutExt && /tmp/bin/cpp/$fileNameWithoutExt",
+		c = "cd $dir && mkdir -p /tmp/bin/c && gcc $fileName -o /tmp/bin/c/$fileNameWithoutExt && /tmp/bin/c/$fileNameWithoutExt",
 	},
 	project = {
 		["~/playground/c++/open-gl"] = {
@@ -215,6 +209,10 @@ require("telescope").load_extension("fzf")
 
 -- nvim-tree
 require("nvim-tree").setup({
+	update_focused_file = {
+		enable = true,
+		update_cwd = true,
+	},
 	view = {
 		width = 30,
 		height = 30,
@@ -435,6 +433,9 @@ cmp.setup({
 		expand = function(args)
 			require("luasnip").lsp_expand(args.body)
 		end,
+	},
+	PreselectMode = {
+		Item = true,
 	},
 	experimental = {
 		ghost_text = false,
