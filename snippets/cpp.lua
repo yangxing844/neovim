@@ -28,6 +28,28 @@ return {
 		)
 	),
 	s(
+		"leetcode",
+		fmt(
+			[[
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+class Solution {{
+    public:
+}};
+int main(int argc, char const *argv[])
+{{
+	vector<int> sample{{}};
+	return 0;
+}}
+
+		]],
+			{}
+		)
+	),
+	s(
 		"sep",
 		fmt(
 			[[
