@@ -200,12 +200,29 @@ return { -- manual snippet
 		i(2),
 		t("}"),
 	}),
+	s({ trig = "tb" }, {
+		t("\\textbf{"),
+		f(function(_, snip)
+			return snip.env.TM_SELECTED_TEXT
+		end, {}),
+		i(1),
+		t("}"),
+	}),
+	s({ trig = "ti" }, {
+		t("\\textit{"),
+		f(function(_, snip)
+			return snip.env.TM_SELECTED_TEXT
+		end, {}),
+		i(1),
+		t("}"),
+	}),
 	s(
 		{ trig = "dv" },
 		{ c(1, { sn(nil, { t("\\dv{"), i(1) }), sn(nil, { t("\\pdv{"), i(1) }) }), t("}{"), i(2), t("}") },
 		math
 	),
 	s({ trig = "num" }, { t("\\num{"), i(1), t("}") }),
+	s({ trig = "frac" }, { t("\\frac{"), i(1), t("}"), t("{"), i(2), t("}") }),
 
 	s(
 		{ trig = "table" },
