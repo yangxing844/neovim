@@ -1,5 +1,7 @@
 require("settings")
 require("key-binding")
+require("treesitter").treesitter()
+require("treesitter").treesitter_obj()
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim") -- Package manager
 	use("tpope/vim-fugitive") -- Git commands in nvim
@@ -8,6 +10,18 @@ require("packer").startup(function(use)
 	use("p00f/nvim-ts-rainbow")
 	use("lewis6991/impatient.nvim")
 	use("mfussenegger/nvim-dap")
+	use({ "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } })
+	-- Lua
+	use({
+		"folke/which-key.nvim",
+		config = function()
+			require("which-key").setup({
+				-- your configuration comes here
+				-- or leave it empty to use the default settings
+				-- refer to the configuration section below
+			})
+		end,
+	})
 	-- use 'ludovicchabant/vim-gutentags' -- Automatic tags management
 	use("norcalli/nvim-colorizer.lua")
 	-- UI to select things (files, grep results, open buffers...)
@@ -36,6 +50,7 @@ require("packer").startup(function(use)
 	})
 	use("neovim/nvim-lspconfig") -- Collection of configurations for built-in LSP client
 	use("hrsh7th/nvim-cmp") -- Autocompletion plugin
+	use({ "mfussenegger/nvim-dap-python" })
 	use("hrsh7th/cmp-nvim-lsp")
 	use("hrsh7th/cmp-path")
 	use("saadparwaiz1/cmp_luasnip")
@@ -121,9 +136,9 @@ require("code_runner").setup({
 		python = "python ",
 		lua = "lua ",
 		typescript = "deno run",
-		rust = "cd $dir && mkdir -p /tmp/bin/rust && rustc $fileName -o /tmp/bin/rust/$fileNameWithoutExt && /tmp/bin/rust/$fileNameWithoutExt",
-		cpp = "cd $dir && mkdir -p /tmp/bin/cpp && g++ $fileName -o /tmp/bin/cpp/$fileNameWithoutExt && /tmp/bin/cpp/$fileNameWithoutExt",
-		c = "cd $dir && mkdir -p /tmp/bin/c && gcc $fileName -o /tmp/bin/c/$fileNameWithoutExt && /tmp/bin/c/$fileNameWithoutExt",
+		rust = "cd $dir && mkdir -p .bin && rustc -g $fileName -o .bin/$fileNameWithoutExt && .bin/$fileNameWithoutExt",
+		cpp = "cd $dir && mkdir -p .bin && g++ -g $fileName -o .bin/$fileNameWithoutExt && .bin/$fileNameWithoutExt",
+		c = "cd $dir && mkdir -p .bin && gcc -g $fileName -o .bin/$fileNameWithoutExt && .bin/$fileNameWithoutExt",
 	},
 	project = {
 		["~/playground/c++/open-gl"] = {
@@ -229,66 +244,6 @@ require("nvim-tree").setup({
 
 	filters = {
 		dotfiles = true,
-	},
-})
---Add leader shortcuts
-
-require("nvim-treesitter.configs").setup({
-	highlight = {
-		enable = true, -- false will disable the whole extension
-	},
-	rainbow = {
-		enable = true,
-		-- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-		extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-		max_file_lines = nil, -- Do not enable for files with more than n lines, int
-		-- colors = {}, -- table of hex strings
-		-- termcolors = {} -- table of colour name strings
-	},
-	incremental_selection = {
-		enable = true,
-		keymaps = {
-			init_selection = "gnn",
-			node_incremental = "grn",
-			scope_incremental = "grc",
-			node_decremental = "grm",
-		},
-	},
-	indent = {
-		enable = true,
-	},
-	textobjects = {
-		select = {
-			enable = true,
-			lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-			keymaps = {
-				-- You can use the capture groups defined in textobjects.scm
-				["af"] = "@function.outer",
-				["if"] = "@function.inner",
-				["ac"] = "@class.outer",
-				["ic"] = "@class.inner",
-			},
-		},
-		move = {
-			enable = true,
-			set_jumps = true, -- whether to set jumps in the jumplist
-			goto_next_start = {
-				["]m"] = "@function.outer",
-				["]]"] = "@class.outer",
-			},
-			goto_next_end = {
-				["]M"] = "@function.outer",
-				["]["] = "@class.outer",
-			},
-			goto_previous_start = {
-				["[m"] = "@function.outer",
-				["[["] = "@class.outer",
-			},
-			goto_previous_end = {
-				["[M"] = "@function.outer",
-				["[]"] = "@class.outer",
-			},
-		},
 	},
 })
 
@@ -506,9 +461,9 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = "*",
 	command = "setlocal formatoptions -=c formatoptions -=r formatoptions -=o ", --disable auto commenting
 })
+
 vim.api.nvim_create_autocmd("BufReadPost", {
-	pattern = "*",
-	command = 'normal! g`"',
+	command = [[ if line("'\"")>1 && line("'\"") <=line("$") | execute "normal! g`\"" | endif]],
 })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -518,7 +473,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	group = highlight_group,
 	pattern = "*",
 })
+
 vim.api.nvim_set_hl(0, "Conceal", { guibg = none })
 vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { guibg = none })
 
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
+
+-- debugger setterings
+require("dap.init").setup()

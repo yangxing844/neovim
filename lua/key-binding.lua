@@ -155,7 +155,7 @@ vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
-vim.keymap.set("n", "ff", vim.lsp.buf.formatting_sync)
+vim.keymap.set("n", "ff", vim.lsp.buf.format)
 
 vim.keymap.set("n", "<leader>d", function()
 	diagnostics_active = not diagnostics_active

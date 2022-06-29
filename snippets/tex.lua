@@ -92,12 +92,15 @@ return { -- manual snippet
 	s({ trig = "pac" }, { t({ "\\usepackage{" }), i(1), t({ "}" }) }, { condition = conds.line_begin }),
 	s({ trig = "template" }, {
 		t({
+			"% !TEX program  = xelatex",
 			"\\documentclass[a4paper]{amsart}",
 			"\\usepackage{textcomp}",
 			"\\usepackage{amsmath,amssymb}",
-			"\\usepackage{graphix}",
-			"\\usepackage{bm}",
+			"\\usepackage{graphicx}",
 			"\\usepackage{siunitx}",
+			"\\usepackage{unicode-math}",
+			"\\setmathfont{STIX Two Math}",
+			"\\setmainfont{STIX Two Text}",
 			"\\begin{document}",
 			"\t",
 		}),
@@ -119,7 +122,21 @@ return { -- manual snippet
 	s({ trig = "sum" }, { t("\\sum_{"), i(1), t("}"), t("^{"), i(2), t("} ") }, math),
 	s({ trig = "int" }, { t("\\int_{"), i(1), t("}"), t("^{"), i(2), t("} ") }, math),
 	s({ trig = "lim" }, { t("\\lim_{"), i(1), t(" to "), i(2), t("} ") }, math),
-	s({ trig = "mcal" }, { t("\\mathcal{"), i(1), t("}") }, math),
+	s({ trig = "cal" }, { t("\\symcal{"), i(1), t("}") }, math),
+	s({ trig = "bcal" }, { t("\\symbfcal{"), i(1), t("}") }, math),
+	s({ trig = "bb" }, { t("\\symbb{"), i(1), t("}") }, math),
+	s({ trig = "bbit" }, { t("\\symbbit{"), i(1), t("}") }, math),
+	s({ trig = "scr" }, { t("\\symscr{"), i(1), t("}") }, math),
+	s({ trig = "bscr" }, { t("\\symbfscr{"), i(1), t("}") }, math),
+	s({ trig = "frak" }, { t("\\symfrak{"), i(1), t("}") }, math),
+	s({ trig = "bfrak" }, { t("\\symbffrak{"), i(1), t("}") }, math),
+	s({ trig = "sfup" }, { t("\\symsfup{"), i(1), t("}") }, math),
+	s({ trig = "up" }, { t("\\symup{"), i(1), t("}") }, math),
+	s({ trig = "it" }, { t("\\symit{"), i(1), t("}") }, math),
+	s({ trig = "bfit" }, { t("\\symbfit{"), i(1), t("}") }, math),
+	s({ trig = "bfup" }, { t("\\symbfup{"), i(1), t("}") }, math),
+	s({ trig = "bsfup" }, { t("\\symbfsfup{"), i(1), t("}") }, math),
+	s({ trig = "bsfit" }, { t("\\symbfsfit{"), i(1), t("}") }, math),
 	s({ trig = "case" }, {
 		t({ "\\begin{cases}", "\t" }),
 		i(1),
@@ -342,6 +359,23 @@ return { -- manual snippet
 		}, { condition = tex.in_text, stored = {
 			user_text = i(1, ""),
 		} }),
+
+		s({ trig = "eq" }, {
+			c(1, {
+				sn(nil, { t({ "\\begin{equation}", "\t" }), r(1, "user_text"), t({ "", "\\end{equation}" }) }),
+				sn(nil, {
+					t({ "\\begin{equation}\\label{eq:" }),
+					i(1),
+					t({ "}", "\t" }),
+					r(2, "user_text"),
+					t({ "", "\\end{equation}" }),
+				}),
+				sn(nil, { t({ "\\[", "\t" }), r(1, "user_text"), t({ "", "\\]" }) }),
+			}),
+		}, { condition = tex.in_text, stored = {
+			user_text = i(1, ""),
+		} }),
+
 		s({ trig = "jk", wordTrig = false }, { t("^{"), i(1), t("}") }),
 		s({ trig = "fd", wordTrig = false }, { t("_{"), i(1), t("}") }, math),
 		s({ trig = "==" }, { t("&=") }, math),
@@ -349,7 +383,7 @@ return { -- manual snippet
 			t({ "\\begin{" }),
 			i(1),
 			t({ "}", "\t" }),
-			i(2),
+			i(0),
 			t({ "", "\\end{" }),
 			f(function(args, _)
 				return args[1]
@@ -367,7 +401,7 @@ return { -- manual snippet
 		),
 		s(
 			{ trig = "(\\?%w+)(,%.)", regTrig = true, hidden = true },
-			{ t("\\symbfit{"), f(function(_, snip)
+			{ t("\\bm{"), f(function(_, snip)
 				return snip.captures[1] .. "}"
 			end, {}) },
 			math

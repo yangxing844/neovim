@@ -65,6 +65,7 @@ vim.o.breakindent = true
 
 --Save undo history
 vim.opt.undofile = true
+vim.opt.cmdheight=1
 
 --Case insensitive searching UNLESS /C or capital in search
 vim.o.ignorecase = true
@@ -86,3 +87,4 @@ vim.opt.listchars = "eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣"
 vim.opt.foldmethod = "expr"
 vim.opt.foldlevel = 99
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.winbar = "%{%v:lua.require'winbar'.eval()%}"
