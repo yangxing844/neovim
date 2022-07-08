@@ -65,7 +65,7 @@ vim.o.breakindent = true
 
 --Save undo history
 vim.opt.undofile = true
-vim.opt.cmdheight=1
+vim.opt.cmdheight=0
 
 --Case insensitive searching UNLESS /C or capital in search
 vim.o.ignorecase = true
@@ -83,8 +83,4 @@ vim.o.completeopt = "menuone,noselect"
 vim.opt.virtualedit = block
 vim.opt.listchars = "eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣"
 
--- fold related settings
-vim.opt.foldmethod = "expr"
-vim.opt.foldlevel = 99
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt.winbar = "%{%v:lua.require'winbar'.eval()%}"
+vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
