@@ -1,12 +1,14 @@
-require("settings")
-require("key-binding")
-require("treesitter").treesitter()
-require("treesitter").treesitter_obj()
+require("impatient")
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim") -- Package manager
 	use("tpope/vim-fugitive") -- Git commands in nvim
 	use("tpope/vim-rhubarb") -- Fugitive-companion to interact with github
-	use("numToStr/Comment.nvim") -- "gc" to comment visual regions/lines
+	use({
+		"numToStr/Comment.nvim",
+		config = function()
+			require("Comment").setup()
+		end,
+	}) -- "gc" to comment visual regions/lines
 	use({
 		"akinsho/toggleterm.nvim",
 		config = function()
@@ -43,6 +45,7 @@ require("packer").startup(function(use)
 		"nvim-telescope/telescope.nvim",
 		requires = { "nvim-lua/plenary.nvim" },
 		config = function()
+			require("telescope").load_extension("fzf")
 			require("telescope").setup({
 				defaults = {
 					mappings = {
@@ -134,6 +137,7 @@ require("packer").startup(function(use)
 	use({
 		"hrsh7th/nvim-cmp",
 		config = function()
+			require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
 			luasnip =
 				require("luasnip"),
 				require("cmp").setup({
@@ -374,10 +378,6 @@ require("packer").startup(function(use)
 	end
 end)
 
-require("impatient")
-require("Comment").setup()
-require("telescope").load_extension("fzf")
-local lspconfig = require("lspconfig")
 vim.lsp.set_log_level("error")
 local on_attach = function(client, bufnr)
 	local opts = { noremap = true, silent = true }
@@ -413,6 +413,8 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
 -- Enable the following language servers
+
+local lspconfig = require("lspconfig")
 local servers = { "rust_analyzer", "tsserver", "clangd", "texlab", "pyright" }
 for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup({
@@ -431,7 +433,7 @@ vim.diagnostic.config({
 	signs = true,
 	underline = true,
 	update_in_insert = false,
-	severity_sort = false,
+	severity_sort = true,
 })
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 for type, icon in pairs(signs) do
@@ -464,12 +466,9 @@ end
 vim.o.undodir = undodir
 
 require("autocmds")
-
-vim.api.nvim_set_hl(0, "Conceal", { guibg = none })
-vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { guibg = none })
-
-require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
-
--- debugger setterings
-require("dap.init").setup()
 require("fold")
+require("settings")
+require("key-binding")
+require("treesitter").treesitter()
+require("treesitter").treesitter_obj()
+require("dap_config.init").setup()

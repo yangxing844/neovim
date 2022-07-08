@@ -2,6 +2,8 @@ local ufo = require("ufo")
 vim.wo.foldcolumn = "1"
 vim.wo.foldlevel = 99 -- feel free to decrease the value
 vim.wo.foldenable = true
+vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+vim.o.foldcolumn = '1'
 
 -- option 2: nvim lsp as LSP client
 -- tell the server the capability of foldingRange

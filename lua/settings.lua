@@ -84,3 +84,6 @@ vim.opt.virtualedit = block
 vim.opt.listchars = "eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣"
 
 vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+
+vim.api.nvim_set_hl(0, "Conceal", { guibg = none })
+vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { guibg = none })

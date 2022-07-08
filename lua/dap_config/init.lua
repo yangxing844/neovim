@@ -1,11 +1,6 @@
 local M = {}
 
 local function configure()
-	-- local dap_install = require "dap-install"
-	-- dap_install.setup {
-	--   installation_path = vim.fn.stdpath "data" .. "/dapinstall/",
-	-- }
-
 	local dap_breakpoint = {
 		error = {
 			text = "🟥",
@@ -33,10 +28,6 @@ local function configure()
 end
 
 local function configure_exts()
-	-- require("nvim-dap-virtual-text").setup({
-	-- 	commented = true,
-	-- })
-
 	local dap, dapui = require("dap"), require("dapui")
 	dapui.setup({}) -- use default
 	dap.listeners.after.event_initialized["dapui_config"] = function()
@@ -51,17 +42,15 @@ local function configure_exts()
 end
 
 local function configure_debuggers()
-	require("dap.cpp").setup()
-	require("dap.python").setup()
-	-- require("rust").setup()
-	-- require("go").setup()
+	require("dap_config.cpp").setup()
+	require("dap_config.python").setup()
 end
 
 function M.setup()
 	configure() -- Configuration
 	configure_debuggers() -- Debugger
 	configure_exts()
-	require("dap.keymaps").setup() -- Keymaps
+	require("dap_config.keymaps").setup() -- Keymaps
 end
 
 return M
