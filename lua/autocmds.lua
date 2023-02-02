@@ -1,7 +1,6 @@
-
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "*",
-	command = "setlocal formatoptions -=c formatoptions -=r formatoptions -=o ", --disable auto commenting
+	command = "setlocal formatoptions -=c formatoptions -=r formatoptions -=o ", --disable auto commenting after o
 })
 
 vim.api.nvim_create_autocmd("BufReadPost", {

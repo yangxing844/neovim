@@ -42,7 +42,6 @@ class Solution {{
 int main(int argc, char const *argv[])
 {{
 	vector<int> sample{{}};
-	return 0;
 }}
 
 		]],
@@ -70,7 +69,6 @@ std::cout<<"\n\n******************************** "
 	int main(int argc, char const *argv[])
 	{
 		<>
-		return 0;	
 	}
 	]],
 			{ i(0) },

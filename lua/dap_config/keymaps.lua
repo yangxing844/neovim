@@ -1,6 +1,5 @@
 local M = {}
 
-local whichkey = require "which-key"
 function M.setup()
 	local keymap = {
 		d = {
@@ -30,25 +29,9 @@ function M.setup()
 			u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
 		},
 	}
-	whichkey.register(keymap, {
-		mode = "n",
-		prefix = "<leader>",
-		buffer = nil,
-		silent = true,
-		noremap = true,
-		nowait = false,
-	})
 	local keymap_v = {
 		name = "Debug",
 		e = { "<cmd>lua require'dapui'.eval()<cr>", "Evaluate" },
 	}
-	whichkey.register(keymap_v, {
-		mode = "v",
-		prefix = "<leader>",
-		buffer = nil,
-		silent = true,
-		noremap = true,
-		nowait = false,
-	})
 end
 return M

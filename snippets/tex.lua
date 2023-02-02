@@ -21,16 +21,24 @@ local fmt = require("luasnip.extras.fmt").fmt
 local conds = require("luasnip.extras.expand_conditions")
 local tex = {}
 local function column_count_from_string(descr)
+	-- this won't work for all cases, but it's simple to improve
+	-- (feel free to do so! :D )
 	return #(descr:gsub("[^clm]", ""))
 end
+
+-- function for the dynamicNode.
 local tab = function(args, snip)
 	local cols = column_count_from_string(args[1][1])
+	-- snip.rows will not be set by default, so handle that case.
+	-- it's also the value set by the functions called from dynamic_node_external_update().
 	if not snip.rows then
 		snip.rows = 1
 	end
 	local nodes = {}
+	-- keep track of which insert-index we're at.
 	local ins_indx = 1
 	for j = 1, snip.rows do
+		-- use restoreNode to not lose content when updating.
 		table.insert(nodes, r(ins_indx, tostring(j) .. "x1", i(1)))
 		ins_indx = ins_indx + 1
 		for k = 2, cols do
@@ -40,6 +48,7 @@ local tab = function(args, snip)
 		end
 		table.insert(nodes, t({ "\\\\", "" }))
 	end
+	-- fix last node.
 	nodes[#nodes] = t("")
 	return sn(nil, nodes)
 end
@@ -95,6 +104,7 @@ return { -- manual snippet
 			"% !TEX program  = xelatex",
 			"\\documentclass[a4paper]{amsart}",
 			"\\usepackage{textcomp}",
+			"\\usepackage{marginnote}",
 			"\\usepackage{amsmath,amssymb}",
 			"\\usepackage{graphicx}",
 			"\\usepackage{siunitx}",
@@ -107,21 +117,38 @@ return { -- manual snippet
 		i(0),
 		t({ "", "\\end{document}" }),
 	}, { condition = conds.line_begin }),
-	s({ trig = "(%s+)(.+)/", regTrig = true, hidden = true }, {
-		f(function(_, snip)
-			return snip.captures[1]
-		end, {}),
-		t("\\frac{"),
-		f(function(_, snip)
-			return snip.captures[2]
-		end, {}),
-		t("}{"),
-		i(1),
-		t({ "}" }),
+	-- regex matching is alway messy
+	-- s({ trig = "(%s+)(.+)/", regTrig = true, hidden = true }, {
+	-- 	f(function(_, snip)
+	-- 		return snip.captures[1]
+	-- 	end, {}),
+	-- 	t("\\frac{"),
+	-- 	f(function(_, snip)
+	-- 		return snip.captures[2]
+	-- 	end, {}),
+	-- 	t("}{"),
+	-- 	i(1),
+	-- 	t({ "}" }),
+	-- }, math),
+
+	s({ trig = "sum" }, {
+		c(1, {
+			sn(nil, { t("\\sum_{"), i(1), t("}"), i(0) }),
+			sn(nil, { t("\\sum{"), i(1), t("}"), t("^{"), i(2), t("} ") }),
+		}),
 	}, math),
-	s({ trig = "sum" }, { t("\\sum_{"), i(1), t("}"), t("^{"), i(2), t("} ") }, math),
-	s({ trig = "int" }, { t("\\int_{"), i(1), t("}"), t("^{"), i(2), t("} ") }, math),
-	s({ trig = "lim" }, { t("\\lim_{"), i(1), t(" to "), i(2), t("} ") }, math),
+	s({ trig = "int" }, {
+		c(1, {
+			sn(nil, { t("\\int_{"), i(1), t("}"), i(0) }),
+			sn(nil, { t("\\int_{"), i(1), t("}"), t("^{"), i(2), t("} ") }),
+		}),
+	}, math),
+	s({ trig = "lim" }, {
+		c(1, {
+			sn(nil, { t("\\lim_{"), i(1), t("}"), i(0) }),
+			sn(nil, { t("\\lim_{"), i(1), t("}"), t("^{"), i(2), t("} ") }),
+		}),
+	}, math),
 	s({ trig = "cal" }, { t("\\symcal{"), i(1), t("}") }, math),
 	s({ trig = "bcal" }, { t("\\symbfcal{"), i(1), t("}") }, math),
 	s({ trig = "bb" }, { t("\\symbb{"), i(1), t("}") }, math),
@@ -205,7 +232,7 @@ return { -- manual snippet
 		end, {}),
 	}, math),
 	s({ trig = "|([%s%S]+)|", regTrig = true, hidden = true, priority = 2000 }, {
-		t("\\abs{"),
+		t("\\abs*{"),
 		f(function(_, snip)
 			return snip.captures[1] .. "}"
 		end, {}),
@@ -233,13 +260,29 @@ return { -- manual snippet
 		i(1),
 		t("}"),
 	}),
-	s(
-		{ trig = "dv" },
-		{ c(1, { sn(nil, { t("\\dv{"), i(1) }), sn(nil, { t("\\pdv{"), i(1) }) }), t("}{"), i(2), t("}") },
-		math
-	),
+
+	s({ trig = "tt" }, {
+		t("\\text{"),
+		f(function(_, snip)
+			return snip.env.TM_SELECTED_TEXT
+		end, {}),
+		i(1),
+		t("}"),
+	}),
+	s({ trig = "dv" }, {
+		c(1, {
+			sn(nil, { t("\\diff{"), i(1), t("}{"), i(2), t("}") }),
+			sn(nil, { t("\\diff["), i(1, "2"), t("]{"), i(2), t("}{"), i(3), t("}") }),
+		}),
+	}, { condition = tex.in_mathzone }),
+	s({ trig = "dp" }, {
+		c(1, {
+			sn(nil, { t("\\diffp{"), i(1), t("}{"), i(2), t("}") }),
+			sn(nil, { t("\\diffp["), i(1, "2"), t("]{"), i(2), t("}{"), i(3), t("}") }),
+		}),
+	}, { condition = tex.in_mathzone }),
 	s({ trig = "num" }, { t("\\num{"), i(1), t("}") }),
-	s({ trig = "frac" }, { t("\\frac{"), i(1), t("}"), t("{"), i(2), t("}") }),
+	s({ trig = "//" }, { t("\\frac{"), i(1), t("}"), t("{"), i(2), t("}") }),
 
 	s(
 		{ trig = "table" },
@@ -326,7 +369,7 @@ return { -- manual snippet
 		s({ trig = "log" }, { t("\\log") }, math),
 		s({ trig = "exp" }, { t("\\exp") }, math),
 
-		s({ trig = "([a-zA-Z}]+)%.([0-9a-zA-Z])", regTrig = true, hidden = true }, {
+		s({ trig = "([a-zA-Z}])%.([0-9a-zA-Z])", regTrig = true, hidden = true, wordTrig = false }, {
 			f(function(_, snip)
 				return snip.captures[1] .. "_"
 			end, {}),
@@ -335,7 +378,7 @@ return { -- manual snippet
 			end, {}),
 		}, math),
 
-		s({ trig = "([a-zA-Z}]+)([0-9])", regTrig = true, hidden = true }, {
+		s({ trig = "([a-zA-Z}])([0-9])", regTrig = true, hidden = true, wordTrig = false }, {
 			f(function(_, snip)
 				return snip.captures[1] .. "^"
 			end, {}),
@@ -372,7 +415,7 @@ return { -- manual snippet
 				}),
 				sn(nil, { t({ "\\[", "\t" }), r(1, "user_text"), t({ "", "\\]" }) }),
 			}),
-		}, { condition = tex.in_text, stored = {
+		}, { condition = conds.line_begin, stored = {
 			user_text = i(1, ""),
 		} }),
 
@@ -383,14 +426,15 @@ return { -- manual snippet
 			t({ "\\begin{" }),
 			i(1),
 			t({ "}", "\t" }),
-			i(0),
+			i(2),
 			t({ "", "\\end{" }),
 			f(function(args, _)
 				return args[1]
 			end, { 1 }),
 			t({ "}" }),
+			i(0),
 		}, { condition = conds.line_begin }),
-		s({ trig = "mk" }, { t("\\("), i(1), t({ "\\)" }) }),
+		s({ trig = "mk" }, { t("\\("), i(1), t({ "\\)" }) }, { condition = tex.in_text }),
 		s({ trig = "sq" }, { t("\\sqrt{"), i(1), t("}") }, math),
 		s(
 			{ trig = "(\\[a-zA-Z]*)%^", regTrig = true, hidden = true },

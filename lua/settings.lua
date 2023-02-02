@@ -11,7 +11,7 @@ vim.o.history = 1000
 vim.o.timeoutlen = 500
 vim.opt.listchars:append("precedes:<,extends:>")
 vim.o.backspace = "indent,eol,start"
-vim.o.relativenumber = true
+-- vim.o.relativenumber = true
 vim.o.number = true
 vim.o.cindent = true
 vim.o.copyindent = true
@@ -28,6 +28,7 @@ vim.o.fileformats = "unix,dos,mac"
 vim.o.fileencodings = "utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1"
 vim.o.enc = "utf-8"
 vim.o.helplang = "en"
+vim.o.cursorline = true
 vim.o.showmode = false
 vim.o.showcmd = true
 vim.o.linebreak = true
@@ -52,7 +53,7 @@ vim.opt.grepprg = "rg"
 -- vim.g.did_load_filetypes = 1
 
 --Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 
 --Make line numbers default
 vim.wo.number = true
@@ -65,7 +66,7 @@ vim.o.breakindent = true
 
 --Save undo history
 vim.opt.undofile = true
-vim.opt.cmdheight=0
+vim.opt.cmdheight=1
 
 --Case insensitive searching UNLESS /C or capital in search
 vim.o.ignorecase = true

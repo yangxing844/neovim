@@ -1,8 +1,9 @@
-require("impatient")
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim") -- Package manager
-	use("tpope/vim-fugitive") -- Git commands in nvim
-	use("tpope/vim-rhubarb") -- Fugitive-companion to interact with github
+	-- use("tpope/vim-fugitive") -- Git commands in nvim
+	use({ "kevinhwang91/nvim-bqf" })
+	use({ "rafamadriz/friendly-snippets" })
+	-- use("andymass/vim-matchup")
 	use({
 		"numToStr/Comment.nvim",
 		config = function()
@@ -15,6 +16,11 @@ require("packer").startup(function(use)
 			require("toggleterm").setup({
 				open_mapping = [[<C-\>]],
 				direction = "float",
+				shade_terminals = false,
+				float_opts = {
+					border = curved,
+					winblend = 7,
+				},
 			})
 		end,
 	})
@@ -23,22 +29,9 @@ require("packer").startup(function(use)
 		"SmiteshP/nvim-navic",
 		requires = "neovim/nvim-lspconfig",
 	})
-	use("lewis6991/impatient.nvim")
 	use("mfussenegger/nvim-dap")
 	use({ "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } })
-	-- Lua
-	use({
-		"folke/which-key.nvim",
-		config = function()
-			require("which-key").setup({
-				-- your configuration comes here
-				-- or leave it empty to use the default settings
-				-- refer to the configuration section below
-			})
-		end,
-	})
 	use({ "kevinhwang91/nvim-ufo", requires = "kevinhwang91/promise-async" })
-	-- use 'ludovicchabant/vim-gutentags' -- Automatic tags management
 	use("norcalli/nvim-colorizer.lua")
 	-- UI to select things (files, grep results, open buffers...)
 	use({
@@ -59,7 +52,15 @@ require("packer").startup(function(use)
 		end,
 	})
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
-	use("navarasu/onedark.nvim") -- Theme inspired by Atom
+	use({
+		"navarasu/onedark.nvim",
+		config = function()
+			require("onedark").setup({
+				transparent = true,
+				term_colors = true,
+			})
+		end,
+	})
 	use({
 		"nvim-lualine/lualine.nvim",
 		config = function()
@@ -242,21 +243,28 @@ require("packer").startup(function(use)
 				store_selection_keys = "<tab>",
 			})
 		end,
-	}) -- Snippets plugin
-	use("tpope/vim-surround") -- vim surround
+	})
 	use({
-		"jose-elias-alvarez/null-ls.nvim",
+		"kylechui/nvim-surround",
 		config = function()
-			require("null-ls").setup({
-				sources = {
-					require("null-ls").builtins.formatting.stylua,
-					require("null-ls").builtins.formatting.jq,
-					require("null-ls").builtins.formatting.beautysh,
-					require("null-ls").builtins.diagnostics.eslint,
-				},
+			require("nvim-surround").setup({
+				-- Configuration here, or leave empty to use defaults
 			})
 		end,
 	})
+	-- use({
+	-- 	"jose-elias-alvarez/null-ls.nvim",
+	-- 	config = function()
+	-- 		require("null-ls").setup({
+	-- 			sources = {
+	-- 				require("null-ls").builtins.formatting.stylua,
+	-- 				require("null-ls").builtins.formatting.jq,
+	-- 				require("null-ls").builtins.formatting.beautysh,
+	-- 				require("null-ls").builtins.diagnostics.eslint,
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- })
 	use("lervag/vimtex")
 	use({
 		"kyazdani42/nvim-tree.lua",
@@ -271,7 +279,6 @@ require("packer").startup(function(use)
 				},
 				view = {
 					width = 30,
-					height = 30,
 					side = "left",
 					preserve_window_proportions = true,
 					mappings = {
@@ -345,7 +352,6 @@ require("packer").startup(function(use)
 					java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
 					python = "python ",
 					lua = "lua ",
-					typescript = "deno run",
 					rust = "cd $dir && mkdir -p .bin && rustc -g $fileName -o .bin/$fileNameWithoutExt && .bin/$fileNameWithoutExt",
 					cpp = "cd $dir && mkdir -p .bin && g++ -g $fileName -o .bin/$fileNameWithoutExt && .bin/$fileNameWithoutExt",
 					c = "cd $dir && mkdir -p .bin && gcc -g $fileName -o .bin/$fileNameWithoutExt && .bin/$fileNameWithoutExt",
@@ -355,24 +361,18 @@ require("packer").startup(function(use)
 						name = "open gl learning",
 						description = "repo to learn open gl",
 						file_name = "main.cpp",
-						command = "make -C build run",
-					},
-					["~/deno/example"] = {
-						name = "ExapleDeno",
-						description = "Project with deno using other command",
-						file_name = "http/main.ts",
-						command = "deno run --allow-net",
+						command = "cmake build && make -C build run",
 					},
 					["~/playground/c++/dict_cpp"] = {
 						name = "My Dictionary app",
 						description = "compile dict",
-						file_name = "main.cpp",
 						command = "make run",
 					},
 				},
 			})
 		end,
 	})
+
 	if packer_bootstrap then
 		require("packer").sync()
 	end
@@ -410,7 +410,7 @@ local on_attach = function(client, bufnr)
 end
 -- nvim-cmp supports additional completion capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
 -- Enable the following language servers
 
@@ -447,6 +447,9 @@ vim.g.vimtex_quickfix_mode = 0
 vim.g.vimtex_imaps_leader = ";"
 vim.g.vimtex_fold_enabled = 1
 vim.g.vimtex_view_method = "zathura"
+vim.g.loaded_matchparen = 1
+-- fixing the slowness of moving cursor
+vim.g.vimtex_matchparen_enabled = 0
 
 vim.g.vimtex_compiler_latexmk = {
 	options = {
@@ -472,3 +475,4 @@ require("key-binding")
 require("treesitter").treesitter()
 require("treesitter").treesitter_obj()
 require("dap_config.init").setup()
+require("luasnip.loaders.from_vscode").lazy_load()

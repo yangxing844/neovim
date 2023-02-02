@@ -13,10 +13,11 @@ end
 
 local external_update_id = 0
 -- func_indx to update the dynamicNode with different functions.
-function Dynamic_node_external_update(func_indx)
+function dynamic_node_external_update(func_indx)
 	-- most of this function is about restoring the cursor to the correct
 	-- position+mode, the important part are the few lines from
 	-- `dynamic_node.snip:store()`.
+
 
 	-- find current node and the innermost dynamicNode it is inside.
 	local current_node = ls.session.current_nodes[vim.api.nvim_get_current_buf()]
@@ -29,10 +30,12 @@ function Dynamic_node_external_update(func_indx)
 	-- store which mode we're in to restore later.
 	local insert_pre_call = vim.fn.mode() == "i"
 	-- is byte-indexed! Doesn't matter here, but important to be aware of.
-	local cursor_pos_pre_relative = util.pos_sub(util.get_cursor_0ind(), current_node.mark:pos_begin_raw())
+	local cursor_pos_pre_relative = util.pos_sub(
+		util.get_cursor_0ind(),
+		current_node.mark:pos_begin_raw()
+	)
 
-	-- store and leave current generated snippet.
-	dynamic_node.snip:store()
+	-- leave current generated snippet.
 	node_util.leave_nodes_between(dynamic_node.snip, current_node)
 
 	-- call update-function.
@@ -51,6 +54,7 @@ function Dynamic_node_external_update(func_indx)
 
 	-- everything below here isn't strictly necessary, but it's pretty nice to have.
 
+
 	-- try to find the node we marked earlier.
 	local target_node = dynamic_node:find_node(function(test_node)
 		return test_node.external_update_id == external_update_id
@@ -63,7 +67,12 @@ function Dynamic_node_external_update(func_indx)
 		node_util.enter_nodes_between(dynamic_node, target_node)
 
 		if insert_pre_call then
-			util.set_cursor_0ind(util.pos_add(target_node.mark:pos_begin_raw(), cursor_pos_pre_relative))
+			util.set_cursor_0ind(
+				util.pos_add(
+					target_node.mark:pos_begin_raw(),
+					cursor_pos_pre_relative
+				)
+			)
 		else
 			node_util.select_node(target_node)
 		end
@@ -141,11 +150,11 @@ end)
 vim.keymap.set("n", "<leader>?", function()
 	return require("telescope.builtin").oldfiles()
 end)
-vim.keymap.set("i", "<C-t>", "_G.Dynamic_node_external_update(1)")
-vim.keymap.set("s", "<C-t>", "_G.Dynamic_node_external_update(1)")
+vim.api.nvim_set_keymap('i', "<C-t>", '<cmd>lua _G.dynamic_node_external_update(1)<Cr>', {noremap = true})
+vim.api.nvim_set_keymap('s', "<C-t>", '<cmd>lua _G.dynamic_node_external_update(1)<Cr>', {noremap = true})
 
-vim.keymap.set("i", "<C-g>", "_G.Dynamic_node_external_update(2)")
-vim.keymap.set("s", "<C-g>", "_G.Dynamic_node_external_update(2)")
+vim.api.nvim_set_keymap('i', "<C-g>", '<cmd>lua _G.dynamic_node_external_update(2)<Cr>', {noremap = true})
+vim.api.nvim_set_keymap('s', "<C-g>", '<cmd>lua _G.dynamic_node_external_update(2)<Cr>', {noremap = true})
 
 vim.keymap.set("t", "<C-j>", "<C-\\><C-n><C-w><C-j>a")
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")

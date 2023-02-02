@@ -2,7 +2,7 @@ local M = {}
 
 function M.setup()
 	-- 💀 Adjust the path to your executable
-	local cmd = "/home/yangxing/Downloads/extension/adapter/codelldb"
+	local cmd = "/usr/bin/codelldb"
 
 	local dap = require("dap")
 

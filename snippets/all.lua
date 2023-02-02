@@ -159,15 +159,6 @@ ls.add_snippets("all", todo_comment_snippets, { type = "snippets", key = "todo_c
 return {
 	ls.parser.parse_snippet("mail", "yangxing844@gmail.com"),
 	s({ trig = "date", name = "Current date", dscr = "Insert the current date" }, {
-		p(os.date, "%A, %B %d of %Y"),
-	}),
-	s({ trig = "snip", name = "snip for luasnip", decr = "expand to a snippet template" }, {
-		t('s({ trig="'),
-		i(1, "trigger"),
-		t('" }, { t('),
-		i(2, "node"),
-		t(") }"),
-		c(3, { t(""), t(",{ condition = tex.in_text}"), t(",{ condition = tex.in_mathzone}") }),
-		t(")"),
+		p(os.date, "%A, %Y %B %d"),
 	}),
 }
