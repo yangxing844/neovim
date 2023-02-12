@@ -1,4 +1,3 @@
-local ufo = require("ufo")
 vim.wo.foldcolumn = "1"
 vim.wo.foldlevel = 99 -- feel free to decrease the value
 vim.wo.foldenable = true
@@ -21,4 +20,3 @@ for _, ls in ipairs(language_servers) do
 	})
 end
 --
-require("ufo").setup()
