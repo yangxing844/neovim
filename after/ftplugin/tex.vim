@@ -16,3 +16,10 @@ call vimtex#imaps#add_map({
 	  \ 'wrapper' : 'vimtex#imaps#wrap_math',
       \ 'leader': ';'
       \})
+
+call vimtex#imaps#add_map({
+      \ 'lhs' : '^',
+	  \ 'rhs' : '\hat{',
+	  \ 'wrapper' : 'vimtex#imaps#wrap_math',
+      \ 'leader': ';'
+      \})
