@@ -82,6 +82,7 @@ require("lazy").setup({
 	},
 	{
 		"nvim-lualine/lualine.nvim",
+		event = "VeryLazy",
 		config = function()
 			require("lualine").setup({
 				options = {
@@ -108,8 +109,10 @@ require("lazy").setup({
 			}
 		end,
 	},
+	"williamboman/mason.nvim",
 	{
 		"lewis6991/gitsigns.nvim",
+		event = "VeryLazy",
 		requires = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("gitsigns").setup({
@@ -157,39 +160,19 @@ require("lazy").setup({
 
 	{
 		"folke/todo-comments.nvim",
-		cmd = { "TodoTrouble", "TodoTelescope" },
-		event = { "BufReadPost", "BufNewFile" },
-		config = true,
-		-- stylua: ignore
-		keys = {
-			{
-				"]t",
-				function()
-					require("todo-comments").jump_next()
-				end,
-				desc = "Next todo comment",
-			},
-			{
-				"[t",
-				function()
-					require("todo-comments").jump_prev()
-				end,
-				desc = "Previous todo comment",
-			},
-			{ "<leader>xt", "<cmd>TodoTrouble<cr>", desc = "Todo (Trouble)" },
-			{ "<leader>xT", "<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>", desc = "Todo/Fix/Fixme (Trouble)" },
-			{ "<leader>st", "<cmd>TodoTelescope<cr>", desc = "Todo" },
-		},
+		requires = "nvim-lua/plenary.nvim",
+		config = function()
+			require("todo-comments").setup({
+				-- your configuration comes here
+				-- or leave it empty to use the default settings
+				-- refer to the configuration section below
+			})
+		end,
 	},
 	"neovim/nvim-lspconfig",
 	{
 		"hrsh7th/nvim-cmp",
-		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"saadparwaiz1/cmp_luasnip",
-		},
+		event = "VeryLazy",
 		config = function()
 			require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
 			luasnip =
@@ -259,12 +242,13 @@ require("lazy").setup({
 				})
 		end,
 	},
-	"mfussenegger/nvim-dap-python",
-	"hrsh7th/cmp-nvim-lsp",
-	"hrsh7th/cmp-path",
-	"saadparwaiz1/cmp_luasnip",
+	{ "mfussenegger/nvim-dap-python", event = "VeryLazy" },
+	{ "hrsh7th/cmp-nvim-lsp", event = "VeryLazy" },
+	{ "hrsh7th/cmp-path", event = "VeryLazy" },
+	{ "saadparwaiz1/cmp_luasnip", event = "VeryLazy" },
 	{
 		"L3MON4D3/LuaSnip",
+		event = "VeryLazy",
 		config = function()
 			local types = require("luasnip.util.types")
 			require("luasnip").config.set_config({
@@ -298,6 +282,7 @@ require("lazy").setup({
 	"lervag/vimtex",
 	{
 		"kyazdani42/nvim-tree.lua",
+		event = "VeryLazy",
 		requires = {
 			"kyazdani42/nvim-web-devicons", -- optional, for file icon
 		},
@@ -328,6 +313,7 @@ require("lazy").setup({
 	},
 	{
 		"windwp/nvim-autopairs",
+		event = "VeryLazy",
 		config = function()
 			require("nvim-autopairs").setup({
 				check_ts = true,
