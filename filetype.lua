@@ -3,5 +3,6 @@ vim.filetype.add({
 		c = "c",
 		cpp = "cpp",
 		shader = "glsl",
+		asy = "asy",
 	},
 })

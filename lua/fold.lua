@@ -2,7 +2,7 @@ vim.wo.foldcolumn = "1"
 vim.wo.foldlevel = 99 -- feel free to decrease the value
 vim.wo.foldenable = true
 vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
-vim.o.foldcolumn = '1'
+vim.o.foldcolumn = "1"
 
 -- option 2: nvim lsp as LSP client
 -- tell the server the capability of foldingRange
@@ -12,7 +12,7 @@ capabilities.textDocument.foldingRange = {
 	dynamicRegistration = false,
 	lineFoldingOnly = true,
 }
-local language_servers = {} -- like {'gopls', 'clangd'}
+local language_servers = { clangd } -- like {'gopls', 'clangd'}
 for _, ls in ipairs(language_servers) do
 	require("lspconfig")[ls].setup({
 		capabilities = capabilities,
